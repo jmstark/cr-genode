@@ -32,6 +32,10 @@
 #include <core_pd_session.h>
 #include <ram_session_component.h>
 
+#include <trace_session/trace_session.h>
+#include <trace/source_registry.h>
+#include <trace/control_area.h>
+
 namespace Genode { void init_stack_area(); }
 
 namespace Genode {
@@ -63,9 +67,10 @@ namespace Genode {
 			                         Range_allocator *ram_alloc,
 			                         Allocator       *md_alloc,
 			                         const char      *args,
+						 Trace::Source_registry &trace_sources,
 			                         size_t           quota_limit = 0)
 			:
-				RAM_SESSION_IMPL(ds_ep, ram_session_ep, ram_alloc, md_alloc, args, quota_limit)
+				RAM_SESSION_IMPL(ds_ep, ram_session_ep, ram_alloc, md_alloc, args, trace_sources, quota_limit)
 			{ }
 
 
@@ -106,6 +111,12 @@ namespace Genode {
 			{
 				Lock::Guard lock_guard(_lock);
 				return RAM_SESSION_IMPL::used();
+			}
+
+			void set_label(char label[])
+			{
+				Lock::Guard lock_guard(_lock);
+				RAM_SESSION_IMPL::set_label(label);
 			}
 	};
 
@@ -149,13 +160,13 @@ namespace Genode {
 			/**
 			 * Constructor
 			 */
-			Core_env()
+			Core_env(Trace::Source_registry trace_sources)
 			:
 				_entrypoint(nullptr, ENTRYPOINT_STACK_SIZE, "entrypoint"),
 				_region_map(_entrypoint),
 				_ram_session(&_entrypoint, &_entrypoint,
 				             platform()->ram_alloc(), platform()->core_mem_alloc(),
-				             "ram_quota=4M", platform()->ram_alloc()->avail()),
+				             "ram_quota=4M", trace_sources, platform()->ram_alloc()->avail()),
 				_ram_session_cap(_entrypoint.manage(&_ram_session)),
 				_pd_session_component(_entrypoint /* XXX use a different entrypoint */),
 				_pd_session_client(_entrypoint.manage(&_pd_session_component)),

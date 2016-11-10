@@ -177,7 +177,16 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 		{
 			return { _session_label, _name,
 			         _platform_thread.execution_time(),
-			         _platform_thread.affinity() };
+			         _platform_thread.affinity(),
+			         _platform_thread.prio(),
+			         _platform_thread.id(),
+			         _platform_thread.foc_id(),
+			         _platform_thread.idle(),
+			         _platform_thread.core_is_online(0),
+			         _platform_thread.core_is_online(1),
+			         _platform_thread.core_is_online(2),
+			         _platform_thread.core_is_online(3),
+			         _platform_thread.num_cores() };
 		}
 
 

@@ -41,6 +41,8 @@ struct Genode::Ram_session_client : Rpc_client<Ram_session>
 	size_t quota() override { return call<Rpc_quota>(); }
 
 	size_t used() override { return call<Rpc_used>(); }
+
+	void set_label(char *label) override { call<Rpc_set_label>(label); }
 };
 
 #endif /* _INCLUDE__RAM_SESSION__CLIENT_H_ */

@@ -120,6 +120,8 @@ struct Genode::Ram_session : Session
 		return q > u ? q - u : 0;
 	}
 
+	virtual void set_label(char *label) = 0;
+
 
 	/*********************
 	 ** RPC declaration **
@@ -133,9 +135,10 @@ struct Genode::Ram_session : Session
 	GENODE_RPC(Rpc_transfer_quota, int, transfer_quota, Ram_session_capability, size_t);
 	GENODE_RPC(Rpc_quota, size_t, quota);
 	GENODE_RPC(Rpc_used, size_t, used);
+	GENODE_RPC(Rpc_set_label, void, set_label, char*);
 
 	GENODE_RPC_INTERFACE(Rpc_alloc, Rpc_free, Rpc_ref_account,
-	                     Rpc_transfer_quota, Rpc_quota, Rpc_used);
+	                     Rpc_transfer_quota, Rpc_quota, Rpc_used, Rpc_set_label);
 };
 
 #endif /* _INCLUDE__RAM_SESSION__RAM_SESSION_H_ */

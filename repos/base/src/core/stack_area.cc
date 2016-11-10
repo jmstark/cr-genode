@@ -137,6 +137,7 @@ class Stack_area_ram_session : public Ram_session
 		int    transfer_quota (Ram_session_capability, size_t) override { return 0; }
 		size_t quota          ()                               override { return 0; }
 		size_t used           ()                               override { return 0; }
+		void   set_label      (char *label)                    override { }
 };
 
 

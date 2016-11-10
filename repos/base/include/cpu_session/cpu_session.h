@@ -22,6 +22,7 @@
 #include <session/session.h>
 #include <dataspace/capability.h>
 #include <pd_session/pd_session.h>
+#include <ram_session/ram_session.h>
 
 namespace Genode { struct Cpu_session; }
 
@@ -209,6 +210,8 @@ struct Genode::Cpu_session : Session
 	 */
 	virtual Capability<Native_cpu> native_cpu() = 0;
 
+	virtual void set(Ram_session_capability ram_cap) = 0;
+
 
 	/*********************
 	 ** RPC declaration **
@@ -225,11 +228,12 @@ struct Genode::Cpu_session : Session
 	GENODE_RPC(Rpc_ref_account, int, ref_account, Cpu_session_capability);
 	GENODE_RPC(Rpc_transfer_quota, int, transfer_quota, Cpu_session_capability, size_t);
 	GENODE_RPC(Rpc_quota, Quota, quota);
+	GENODE_RPC(Rpc_set, void, set, Ram_session_capability);
 	GENODE_RPC(Rpc_native_cpu, Capability<Native_cpu>, native_cpu);
 
 	GENODE_RPC_INTERFACE(Rpc_create_thread, Rpc_kill_thread, Rpc_exception_sigh,
 	                     Rpc_affinity_space, Rpc_trace_control, Rpc_ref_account,
-	                     Rpc_transfer_quota, Rpc_quota, Rpc_native_cpu);
+	                     Rpc_transfer_quota, Rpc_quota, Rpc_native_cpu, Rpc_set);
 };
 
 

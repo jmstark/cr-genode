@@ -139,21 +139,21 @@ class Genode::Trace::Subject
 		Ram_dataspace       _policy;
 		Policy_id           _policy_id;
 
-		Subject_info::State _state()
+		CPU_info::State _state()
 		{
 			Locked_ptr<Source> source(_source);
 
 			/* source vanished */
 			if (!source.valid())
-				return Subject_info::DEAD;
+				return CPU_info::DEAD;
 
 			if (source->enabled())
-				return source->owned_by(this) ? Subject_info::TRACED
-				                              : Subject_info::FOREIGN;
+				return source->owned_by(this) ? CPU_info::TRACED
+				                              : CPU_info::FOREIGN;
 			if (source->error())
-				return Subject_info::ERROR;
+				return CPU_info::ERROR;
 
-			return Subject_info::UNTRACED;
+			return CPU_info::UNTRACED;
 		}
 
 	public:
@@ -234,11 +234,12 @@ class Genode::Trace::Subject
 			source->enable();
 		}
 
-		Subject_info info()
+		CPU_info info_cpu()
 		{
 			Execution_time execution_time;
 			Affinity::Location affinity;
-
+			unsigned prio;
+			unsigned id;
 			{
 				Locked_ptr<Source> source(_source);
 
@@ -246,11 +247,62 @@ class Genode::Trace::Subject
 					Trace::Source::Info const info = source->info();
 					execution_time = info.execution_time;
 					affinity       = info.affinity;
+					prio=info.prio;
+					id=info.id;
+
 				}
 			}
+			CPU_info info= CPU_info(_label, _name, _state(), _policy_id,
+			                    execution_time, affinity, prio, id
+						);
+			return info;
+		}
 
-			return Subject_info(_label, _name, _state(), _policy_id,
-			                    execution_time, affinity);
+		RAM_info info_ram()
+		{
+			size_t ram_quota;
+			size_t ram_used;
+			{
+				Locked_ptr<Source> source(_source);
+
+				if (source.is_valid()) {
+					Trace::Source::Info const info = source->info();
+					ram_quota= info.ram_quota;
+					ram_used= info.ram_used;
+				}
+			}
+			RAM_info info= RAM_info(_label, _name,
+			                    ram_quota, ram_used
+						);
+			return info;
+		}
+
+		SCHEDULER_info info_scheduler()
+		{
+			Execution_time idle;
+			bool core0_is_online;
+			bool core1_is_online;
+			bool core2_is_online;
+			bool core3_is_online;
+			unsigned num_cores;
+			unsigned foc_id;
+			{
+				Locked_ptr<Source> source(_source);
+
+				if (source.is_valid()) {
+					Trace::Source::Info const info = source->info();
+					idle=info.idle;
+					core0_is_online=info.core0_is_online;
+					core1_is_online=info.core1_is_online;
+					core2_is_online=info.core2_is_online;
+					core3_is_online=info.core3_is_online;
+					num_cores=info.num_cores;
+					foc_id=info.foc_id;
+				}
+			}
+			SCHEDULER_info info=SCHEDULER_info(idle, core0_is_online, core1_is_online, core2_is_online, core3_is_online, num_cores, foc_id);
+
+			return info;
 		}
 
 		Dataspace_capability buffer() const { return _buffer.dataspace(); }

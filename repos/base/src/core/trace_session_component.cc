@@ -127,9 +127,22 @@ void Session_component::resume(Subject_id subject_id)
 }
 
 
-Subject_info Session_component::subject_info(Subject_id subject_id)
+CPU_info Session_component::cpu_info(Subject_id subject_id)
 {
-	return _subjects.lookup_by_id(subject_id)->info();
+	return _subjects.lookup_by_id(subject_id)->info_cpu();
+	
+}
+
+RAM_info Session_component::ram_info(Subject_id subject_id)
+{
+	return _subjects.lookup_by_id(subject_id)->info_ram();
+	
+}
+
+SCHEDULER_info Session_component::scheduler_info(Subject_id subject_id)
+{
+	return _subjects.lookup_by_id(subject_id)->info_scheduler();
+	
 }
 
 
