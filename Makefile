@@ -26,7 +26,7 @@ toolchain:
 ports: foc libports
 
 foc:
-	$(MAKE) -j -C repos/base-focnados prepare
+	$(MAKE) -C repos/base-focnados prepare
 
 libports:
 	$(MAKE) -C repos/libports prepare
@@ -41,7 +41,7 @@ platform: genode_build_dir
 genode_build_dir:
 	tool/create_builddir $(GENODE_TARGET) BUILD_DIR=$(GENODE_BUILD_DIR)
 	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/libports\n' >> $(BUILD_CONF)
-	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/\n' >> $(BUILD_CONF) #add additional repos
+	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/taskmanager\n' >> $(BUILD_CONF) #add additional repos
 
 # Delete build directory for all target systems. In some cases, subfolders in the contrib directory might be corrupted. Remove manually and re-prepare if necessary.
 clean:
@@ -53,7 +53,7 @@ clean:
 # ================================================================
 # Run Genode with an active dom0 server.
 run:
-	$(MAKE) -j -C $(GENODE_BUILD_DIR) run/ #declare which run file to run
+	$(MAKE) -C $(GENODE_BUILD_DIR) run/taskmanager #declare which run file to run
 #
 # ================================================================
 

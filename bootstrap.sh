@@ -9,5 +9,4 @@
 #
 # Contributor: Bernhard Blieninger
 ##############################
-cd /vagrant/
-make run
+
