@@ -1,3 +1,17 @@
+		====================
+		Vagrant instructions
+		====================
+Packages required:
+-vagrant
+-virtualbox
+
+Inside genode folder:
+-change "PROJECT" inside Makefile to your needs
+-vagrant up (Wait until it finished. This may take some time. Machine will reboot once.)
+-login in VM as user ubuntu with password vagrant
+-open console
+-cd /vagrant
+-make run
 
                       =================================
                       Genode Operating System Framework
