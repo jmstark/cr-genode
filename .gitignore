@@ -37,3 +37,5 @@
 /repos/qt4/tool/uic
 /repos/world
 
+/.vagrant/
+/*console.log

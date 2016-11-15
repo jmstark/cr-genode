@@ -1,5 +1,6 @@
 #project
-PROJECT ?= demo
+PROJECT ?= hello
+PROJECT_DIR ?= hello_tutorial
 
 # options: x86 arm
 TOOLCHAIN_TARGET    ?= arm
@@ -44,7 +45,7 @@ platform: genode_build_dir
 genode_build_dir:
 	tool/create_builddir $(GENODE_TARGET) BUILD_DIR=$(GENODE_BUILD_DIR)
 	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/libports\n' >> $(BUILD_CONF)
-	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/$(PROJECT)\n' >> $(BUILD_CONF) #add additional repos
+	printf 'REPOSITORIES += $$(GENODE_DIR)/repos/$(PROJECT_DIR)\n' >> $(BUILD_CONF) #add additional repos
 
 # Delete build directory for all target systems. In some cases, subfolders in the contrib directory might be corrupted. Remove manually and re-prepare if necessary.
 clean:
