@@ -28,6 +28,92 @@
 using namespace Genode;
 
 
+int Cpu_session_component::set_sched_type(unsigned core, unsigned sched_type){
+	if (core >= platform()->affinity_space().total()){
+		PERR("Core not available");
+		return -1;
+	}
+	if (sched_type < 0 || sched_type > 3){
+		PERR("sched_type not known");
+		return -2;
+	}
+
+	_sched_type[core] = sched_type;
+	return 0;
+}
+
+int Cpu_session_component::get_sched_type(unsigned core){
+	if (core >= platform()->affinity_space().total()){
+		PERR("Core not available");
+		return -1;
+	}
+	return _sched_type[core];
+}
+
+Thread_capability Cpu_session_component::create_fp_edf_thread(Capability<Pd_session> pd_cap,
+															Name const &name,
+															Affinity::Location affinity,
+															Weight weight,
+															addr_t utcb,
+															unsigned priority,
+															unsigned deadline,
+															unsigned cpu)
+{
+  Trace::Thread_name thread_name(name.string());
+
+	Cpu_thread_component *thread = 0;
+
+	if (_sched_type[cpu] == FIXED_PRIO && priority == 0){
+		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", cpu);
+		throw Cpu_session::Thread_creation_failed();
+	}
+	if(_sched_type[cpu] == DEADLINE && deadline == 0){
+		PERR("Wrong Scheduling Type on CPU %d, expected EDF", cpu);
+		throw Cpu_session::Thread_creation_failed();
+	}
+
+	if (weight.value == 0) {
+		warning("Thread ", name, ": Bad weight 0, using default weight instead.");
+		weight = Weight();
+	}
+	if (weight.value > QUOTA_LIMIT) {
+		warning("Thread ", name, ": Oversized weight ", weight.value, ", using limit instead.");
+		weight = Weight(QUOTA_LIMIT);
+	}
+
+	Lock::Guard thread_list_lock_guard(_thread_list_lock);
+	_incr_weight(weight.value);
+
+	/*
+	 * Create thread associated with its protection domain
+	 */
+	auto create_thread_lambda = [&] (Pd_session_component *pd) {
+		if (!pd) {
+			error("create_thread: invalid PD argument");
+			throw Thread_creation_failed();
+		}
+		Lock::Guard slab_lock_guard(_thread_alloc_lock);
+		thread = new (&_thread_alloc)
+			Cpu_thread_component(
+				cap(), *_thread_ep, *_pager_ep, *pd, _trace_control_area,
+				_trace_sources, weight, _weight_to_quota(weight.value),
+				deadline, _thread_affinity(affinity), _label, thread_name,
+				priority, utcb);
+	};
+
+	try { _thread_ep->apply(pd_cap, create_thread_lambda); }
+	catch (Region_map::Out_of_metadata) { throw Out_of_metadata(); }
+	catch (Allocator::Out_of_memory)    { throw Out_of_metadata(); }
+
+	thread->session_exception_sigh(_exception_sigh);
+
+	_thread_list.insert(thread);
+
+	return thread->cap();
+}
+
+
+
 Thread_capability Cpu_session_component::create_thread(Capability<Pd_session> pd_cap,
                                                        Name const &name,
                                                        Affinity::Location affinity,
@@ -260,6 +346,8 @@ Cpu_session_component::Cpu_session_component(Rpc_entrypoint         *session_ep,
 		/* clamp priority value to valid range */
 		_priority = min((unsigned)PRIORITY_LIMIT - 1, _priority);
 	}
+	/*Create Array with number_of_core Elements for storing scheduling strategy*/
+	_sched_type = new (Genode::env()->heap()) long[platform()->affinity_space().total()];
 }
 
 
@@ -267,6 +355,7 @@ Cpu_session_component::~Cpu_session_component()
 {
 	_deinit_threads();
 	_deinit_ref_account();
+	destroy(Genode::env()->heap(), _sched_type);
 }
 
 
@@ -354,7 +443,7 @@ size_t Cpu_session_component::_weight_to_quota(size_t const weight) const {
 	return (weight * _quota) / _weight; }
 
 
-void Cpu_session_component::set(Ram_session_capability ram_cap) 
+void Cpu_session_component::set(Ram_session_capability ram_cap)
 {
 	Genode::Ram_connection::Ram_session_client ram(ram_cap);
 }
@@ -370,4 +459,3 @@ unsigned Trace::Source::_alloc_unique_id()
 	Lock::Guard guard(lock);
 	return cnt++;
 }
-

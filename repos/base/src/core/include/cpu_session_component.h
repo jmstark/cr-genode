@@ -57,6 +57,14 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		Trace::Source_registry    &_trace_sources;
 		Trace::Control_area        _trace_control_area;
 
+    long*                       _sched_type;
+
+    enum {
+      ALL = 0,
+      FIXED_PRIO = 1,
+      DEADLINE = 2
+    };
+
 		/*
 		 * Members for quota accounting
 		 */
@@ -156,8 +164,13 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		 ** CPU session interface **
 		 ***************************/
 
+		int set_sched_type(unsigned core, unsigned sched_type);
+		int get_sched_type(unsigned core);
 		Thread_capability create_thread(Capability<Pd_session>, Name const &,
 		                                Affinity::Location, Weight, addr_t) override;
+		Thread_capability create_fp_edf_thread(Capability<Pd_session>, Name const &,
+		                                Affinity::Location, Weight, addr_t,
+		                                unsigned, unsigned, unsigned) override;
 		void kill_thread(Thread_capability) override;
 		void exception_sigh(Signal_context_capability) override;
 		Affinity::Space affinity_space() const override;

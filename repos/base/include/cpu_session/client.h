@@ -30,6 +30,20 @@ struct Genode::Cpu_session_client : Rpc_client<Cpu_session>
 	              Affinity::Location affinity, Weight weight, addr_t utcb = 0) override {
 		return call<Rpc_create_thread>(pd, name, affinity, weight, utcb); }
 
+	Thread_capability
+	create_fp_edf_thread(Capability<Pd_session> pd, Name const &name,
+	              Affinity::Location affinity, Weight weight, addr_t utcb = 0,
+	              unsigned priority = 0, unsigned deadline = 0,
+	              unsigned cpu = 0) override {
+		return call<Rpc_create_fp_edf_thread>(pd, name, affinity, weight, utcb,
+	              	              	        priority, deadline, cpu); }
+
+	int set_sched_type(unsigned core = 0, unsigned sched_type = 0){
+		return call<Rpc_set_sched_type>(core, sched_type); }
+
+	int get_sched_type(unsigned core = 0){
+		return call<Rpc_get_sched_type>(core); }
+
 	void set(Ram_session_capability ram_cap) override {
 		call<Rpc_set>(ram_cap); }
 

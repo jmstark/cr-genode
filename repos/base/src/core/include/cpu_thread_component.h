@@ -159,6 +159,42 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 			_trace_sources.insert(&_trace_source);
 		}
 
+    Cpu_thread_component(Cpu_session_capability     cpu_session_cap,
+                         Rpc_entrypoint            &ep,
+                         Pager_entrypoint          &pager_ep,
+                         Pd_session_component      &pd,
+                         Trace::Control_area       &trace_control_area,
+                         Trace::Source_registry    &trace_sources,
+                         Cpu_session::Weight        weight,
+                         size_t                     quota,
+                         size_t                     deadline,
+                         Affinity::Location         location,
+                         Session_label       const &label,
+                         Thread_name         const &name,
+                         unsigned                   priority,
+                         addr_t                     utcb)
+    :
+      _ep(ep), _pager_ep(pager_ep), _pd(pd.cap()),
+      _address_space_region_map(pd.address_space_region_map()),
+      _weight(weight),
+      _session_label(label), _name(name),
+      _platform_thread(quota, name.string(), priority, deadline, location, utcb),
+      _bound_to_pd(_bind_to_pd(pd)),
+      _trace_control_slot(trace_control_area),
+      _trace_sources(trace_sources),
+      _rm_client(cpu_session_cap, _ep.manage(this),
+                 &_address_space_region_map,
+                 _platform_thread.pager_object_badge(),
+                 _address_space, _platform_thread.affinity())
+    {
+      _address_space_region_map.add_client(_rm_client);
+
+      /* acquaint thread with its pager object */
+      _pager_ep.manage(&_rm_client);
+      _platform_thread.pager(&_rm_client);
+      _trace_sources.insert(&_trace_source);
+    }
+
 		~Cpu_thread_component()
 		{
 			_trace_sources.remove(&_trace_source);

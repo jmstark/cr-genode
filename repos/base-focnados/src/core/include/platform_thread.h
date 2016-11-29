@@ -51,6 +51,7 @@ namespace Genode {
 			                                      is bound to */
 			Pager_object      *_pager_obj;
 			unsigned           _prio;
+			unsigned           _dl;
 			long unsigned int  _id;
 			long long unsigned _old_time;
 
@@ -68,6 +69,12 @@ namespace Genode {
 			 * Constructor for non-core threads
 			 */
 			Platform_thread(size_t, const char *name, unsigned priority,
+			                Affinity::Location, addr_t);
+
+			/**
+			 * Constructor for fp-edf non-core threads
+			 */
+			Platform_thread(size_t, const char *name, unsigned priority, unsigned deadline,
 			                Affinity::Location, addr_t);
 
 			/**

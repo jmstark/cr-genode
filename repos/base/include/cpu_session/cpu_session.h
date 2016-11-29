@@ -80,10 +80,35 @@ struct Genode::Cpu_session : Session
 	 * \throw           Quota_exceeded
 	 */
 	virtual Thread_capability create_thread(Capability<Pd_session> pd,
-	                                        Name const            &name,
-	                                        Affinity::Location     affinity,
-	                                        Weight                 weight,
-	                                        addr_t                 utcb = 0) = 0;
+																				Name const            &name,
+																				Affinity::Location     affinity,
+																				Weight                 weight,
+																				addr_t                 utcb = 0) = 0;
+
+	virtual Thread_capability create_fp_edf_thread(Capability<Pd_session> pd,
+																				Name const            &name,
+																				Affinity::Location     affinity,
+																				Weight                 weight,
+																				addr_t                 utcb = 0,
+																				unsigned               priority = 0,
+																				unsigned               deadline = 0,
+																				unsigned               cpu = 0) = 0;
+
+	/**
+	 * Set sched_type for the given core
+	 * 0 = Allow all Sched_types,
+	 * 1 = FixedPrio
+	 * 2 = EDF
+	 */
+	virtual int set_sched_type(unsigned core = 0, unsigned sched_type = 0) = 0;
+
+	/**
+	 * Get sched_type for the given core
+	 * 0 = Allow all Sched_types,
+	 * 1 = FixedPrio
+	 * 2 = EDF
+	 */
+	virtual int get_sched_type(unsigned core = 0) = 0;
 
 	/**
 	 * Kill an existing thread
@@ -221,6 +246,12 @@ struct Genode::Cpu_session : Session
 	                 GENODE_TYPE_LIST(Thread_creation_failed, Out_of_metadata),
 	                 Capability<Pd_session>, Name const &, Affinity::Location,
 	                 Weight, addr_t);
+	GENODE_RPC_THROW(Rpc_create_fp_edf_thread, Thread_capability, create_fp_edf_thread,
+	                 GENODE_TYPE_LIST(Thread_creation_failed, Out_of_metadata),
+									 Capability<Pd_session>, Name const &, Affinity::Location,
+									 Weight, addr_t, unsigned, unsigned, unsigned);
+	GENODE_RPC(Rpc_set_sched_type, int, set_sched_type, unsigned, unsigned);
+	GENODE_RPC(Rpc_get_sched_type, int, get_sched_type, unsigned);
 	GENODE_RPC(Rpc_kill_thread, void, kill_thread, Thread_capability);
 	GENODE_RPC(Rpc_exception_sigh, void, exception_sigh, Signal_context_capability);
 	GENODE_RPC(Rpc_affinity_space, Affinity::Space, affinity_space);
@@ -231,7 +262,8 @@ struct Genode::Cpu_session : Session
 	GENODE_RPC(Rpc_set, void, set, Ram_session_capability);
 	GENODE_RPC(Rpc_native_cpu, Capability<Native_cpu>, native_cpu);
 
-	GENODE_RPC_INTERFACE(Rpc_create_thread, Rpc_kill_thread, Rpc_exception_sigh,
+	GENODE_RPC_INTERFACE(Rpc_create_thread, Rpc_create_fp_edf_thread, Rpc_set_sched_type,
+	                     Rpc_get_sched_type, Rpc_kill_thread, Rpc_exception_sigh,
 	                     Rpc_affinity_space, Rpc_trace_control, Rpc_ref_account,
 	                     Rpc_transfer_quota, Rpc_quota, Rpc_native_cpu, Rpc_set);
 };

@@ -214,8 +214,18 @@ void Platform_thread::affinity(Affinity::Location location)
 
 	int const cpu = location.xpos();
 
-	l4_sched_param_t params = l4_sched_param(_prio);
-	params.affinity         = l4_sched_cpu_set(cpu, 0, 1);
+	l4_sched_param_t params;
+	/* set priority of thread */
+	if (_dl<=0)
+		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
+	else if(_prio<=0)
+		params = l4_sched_param_by_type(Deadline, _dl, 0);
+	else{
+		PWRN("wrong scheduling type");
+		return;
+	}
+
+	params.affinity = l4_sched_cpu_set(cpu, 0, 1);
 	l4_msgtag_t tag = l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP,
 	                                          _thread.local.data()->kcap(), &params);
 	if (l4_error(tag))
@@ -265,8 +275,17 @@ void Platform_thread::_finalize_construction(const char *name)
 	strncpy(_name, name, sizeof(_name));
 	Fiasco::l4_debugger_set_object_name(_thread.local.data()->kcap(), name);
 
+	l4_sched_param_t params;
 	/* set priority of thread */
-	l4_sched_param_t params = l4_sched_param(_prio);
+	if (_dl<=0)
+		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
+	else if(_prio<=0)
+		params = l4_sched_param_by_type(Deadline, _dl, 0);
+	else{
+		PWRN("wrong scheduling type");
+		return;
+	}
+
 	l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP, _thread.local.data()->kcap(),
 	                        &params);
 	_id = l4_utcb_mr()->mr[7];
@@ -360,6 +379,26 @@ Platform_thread::Platform_thread(size_t, const char *name, unsigned prio,
   _platform_pd(0),
   _pager_obj(0),
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio))
+{
+	/* XXX remove const cast */
+	((Core_cap_index *)_thread.local.data())->pt(this);
+	_create_thread();
+	_finalize_construction(name);
+	affinity(location);
+}
+
+
+Platform_thread::Platform_thread(size_t, const char *name, unsigned prio, unsigned deadline,
+                                 Affinity::Location location, addr_t)
+: _state(DEAD),
+  _core_thread(false),
+  _thread(true),
+  _irq(true),
+  _utcb(0),
+  _platform_pd(0),
+  _pager_obj(0),
+  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
+  _dl(deadline)
 {
 	/* XXX remove const cast */
 	((Core_cap_index *)_thread.local.data())->pt(this);
