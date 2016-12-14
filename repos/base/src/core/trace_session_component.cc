@@ -16,10 +16,19 @@
 #include <dataspace/capability.h>
 #include <base/rpc_client.h>
 
+/* Fiasco includes */
+namespace Fiasco {
+#include <l4/sys/debugger.h>
+#include <l4/sys/factory.h>
+#include <l4/sys/irq.h>
+#include <l4/sys/scheduler.h>
+#include <l4/sys/thread.h>
+#include <l4/sys/types.h>
+}
 
 using namespace Genode;
 using namespace Genode::Trace;
-
+using namespace Fiasco;
 
 Dataspace_capability Session_component::dataspace()
 {
@@ -130,21 +139,46 @@ void Session_component::resume(Subject_id subject_id)
 CPU_info Session_component::cpu_info(Subject_id subject_id)
 {
 	return _subjects.lookup_by_id(subject_id)->info_cpu();
-	
+
 }
 
 RAM_info Session_component::ram_info(Subject_id subject_id)
 {
 	return _subjects.lookup_by_id(subject_id)->info_ram();
-	
+
 }
 
 SCHEDULER_info Session_component::scheduler_info(Subject_id subject_id)
 {
 	return _subjects.lookup_by_id(subject_id)->info_scheduler();
-	
+
 }
 
+int Session_component::deploy_thread(Threads tid,  unsigned prio) //gmc
+{
+	warning("Deploying threads");
+
+	l4_sched_thread_list tlist;
+
+/*
+ * Fill the thread list to the kernel list
+ * Have to make the same structure on both sides for transparency
+ */
+	for(int i = 0; i< tid.n; i++)
+	{
+		tlist.list[i] = tid.id[i];
+		tlist.prio[i] = tid.prio[i];
+	}
+	tlist.n = tid.n;
+	Fiasco::l4_sched_param_t params = Fiasco::l4_sched_param(prio);
+
+	Fiasco::l4_msgtag_t tag = Fiasco::l4_scheduler_deploy_thread(Fiasco::L4_BASE_SCHEDULER_CAP,
+			tlist, &params);
+	if (Fiasco::l4_error(tag)){
+			warning("Scheduling thread has failed %lx %lx %d", tid.id[0], tid.id[1], tlist.n);
+			return 0;}
+	return 1;
+}
 
 Dataspace_capability Session_component::buffer(Subject_id subject_id)
 {
