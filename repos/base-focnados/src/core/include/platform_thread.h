@@ -53,7 +53,6 @@ namespace Genode {
 			unsigned           _prio;
 			unsigned           _dl;
 			long unsigned int  _id;
-			long long unsigned _old_time;
 
 			Affinity::Location _location;
 
@@ -194,15 +193,13 @@ namespace Genode {
 			 */
 			unsigned long long execution_time() const;
 
-			unsigned long long ex_time_since();
-
 			unsigned prio() const;
 
 			unsigned id() const;
 
 			long unsigned int foc_id() const;
 
-			unsigned long long idle() const;
+			unsigned long long idle(unsigned num) const;
 
 			bool core_is_online(unsigned num) const;
 

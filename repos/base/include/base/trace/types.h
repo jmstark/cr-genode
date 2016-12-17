@@ -190,7 +190,10 @@ class Genode::Trace::SCHEDULER_info
 {
 	private:
 
-		Execution_time	_idle;
+		Execution_time	_idle0;
+		Execution_time	_idle1;
+		Execution_time	_idle2;
+		Execution_time	_idle3;
 		bool		_core0_is_online;
 		bool		_core1_is_online;
 		bool		_core2_is_online;
@@ -202,7 +205,10 @@ class Genode::Trace::SCHEDULER_info
 
 		SCHEDULER_info() {}
 
-		SCHEDULER_info(Execution_time idle,
+		SCHEDULER_info(Execution_time idle0,
+				Execution_time idle1,
+				Execution_time idle2,
+				Execution_time idle3,
 				bool core0_is_online,
 				bool core1_is_online,
 				bool core2_is_online,
@@ -210,12 +216,15 @@ class Genode::Trace::SCHEDULER_info
 				unsigned num_cores,
 			    	long unsigned int foc_id)
 		:
-			_idle(idle), _core0_is_online(core0_is_online), _core1_is_online(core1_is_online),
+			_idle0(idle0), _idle1(idle1), _idle2(idle2), _idle3(idle3), _core0_is_online(core0_is_online), _core1_is_online(core1_is_online),
 			_core2_is_online(core2_is_online), _core3_is_online(core3_is_online),
 			_num_cores(num_cores), _foc_id(foc_id)
 		{}
 
-		Execution_time		idle()			const { return _idle; }
+		Execution_time		idle0()			const { return _idle0; }
+		Execution_time		idle1()			const { return _idle1; }
+		Execution_time		idle2()			const { return _idle2; }
+		Execution_time		idle3()			const { return _idle3; }
 		bool			core0_is_online()	const { return _core0_is_online; }
 		bool			core1_is_online()	const { return _core1_is_online; }
 		bool			core2_is_online()	const { return _core2_is_online; }

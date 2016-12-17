@@ -279,7 +279,10 @@ class Genode::Trace::Subject
 
 		SCHEDULER_info info_scheduler()
 		{
-			Execution_time idle;
+			Execution_time idle0;
+			Execution_time idle1;
+			Execution_time idle2;
+			Execution_time idle3;
 			bool core0_is_online;
 			bool core1_is_online;
 			bool core2_is_online;
@@ -291,7 +294,10 @@ class Genode::Trace::Subject
 
 				if (source.is_valid()) {
 					Trace::Source::Info const info = source->info();
-					idle=info.idle;
+					idle0=info.idle0;
+					idle1=info.idle1;
+					idle2=info.idle2;
+					idle3=info.idle3;
 					core0_is_online=info.core0_is_online;
 					core1_is_online=info.core1_is_online;
 					core2_is_online=info.core2_is_online;
@@ -300,7 +306,7 @@ class Genode::Trace::Subject
 					foc_id=info.foc_id;
 				}
 			}
-			SCHEDULER_info info=SCHEDULER_info(idle, core0_is_online, core1_is_online, core2_is_online, core3_is_online, num_cores, foc_id);
+			SCHEDULER_info info=SCHEDULER_info(idle0, idle1, idle2, idle3, core0_is_online, core1_is_online, core2_is_online, core3_is_online, num_cores, foc_id);
 
 			return info;
 		}

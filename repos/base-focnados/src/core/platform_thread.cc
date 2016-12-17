@@ -313,24 +313,6 @@ unsigned long long Platform_thread::execution_time() const
 	return time;
 }
 
-unsigned long long Platform_thread::ex_time_since()
-{
-	unsigned long long time = 0;
-
-	unsigned long long time_diff = 0;
-
-	if (_utcb) {
-		l4_thread_stats_time(_thread.local.data()->kcap());
-		time = *(l4_kernel_clock_t*)&l4_utcb_mr()->mr[0];
-	}
-
-	time_diff=time-_old_time;
-
-	_old_time=time;
-
-	return time_diff;
-}
-
 unsigned Platform_thread::prio() const
 {
 	return _prio;
@@ -346,11 +328,11 @@ long unsigned int Platform_thread::foc_id() const
 	return _id;
 }
 
-unsigned long long Platform_thread::idle() const
+unsigned long long Platform_thread::idle(unsigned num) const
 {
 	unsigned long long time = 0;
 
-	l4_sched_cpu_set_t cpus = l4_sched_cpu_set(0, 0, 1);
+	l4_sched_cpu_set_t cpus = l4_sched_cpu_set(0, 0, num+1);
 
 	if (_utcb) {
 		l4_scheduler_idle_time(L4_BASE_SCHEDULER_CAP, &cpus);

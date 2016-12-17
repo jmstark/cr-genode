@@ -59,7 +59,10 @@ class Genode::Trace::Source
 			unsigned	   prio;
 			unsigned	   id;
 			unsigned	   foc_id;
-			Execution_time	   idle;
+			Execution_time	   idle0;
+			Execution_time	   idle1;
+			Execution_time	   idle2;
+			Execution_time	   idle3;
 			bool		   core0_is_online;
 			bool		   core1_is_online;
 			bool		   core2_is_online;
