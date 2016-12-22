@@ -103,7 +103,6 @@ class Genode::Trace::Session_component
 		CPU_info cpu_info(Subject_id);
 		RAM_info ram_info(Subject_id);
 		SCHEDULER_info scheduler_info(Subject_id);
-		int deploy_thread(Threads, unsigned); //gmc
 		Dataspace_capability buffer(Subject_id);
 		void free(Subject_id);
 };
