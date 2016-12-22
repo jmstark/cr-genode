@@ -31,8 +31,8 @@
 #define LWIP_NETIF_API              1  /* Network interface API */
 #define LWIP_NETIF_LOOPBACK         1  /* Looping back to same address? */
 #define LWIP_HAVE_LOOPIF            1  /* 127.0.0.1 support ? */
-#define LWIP_STATS                  0  /* disable stating */
-#define LWIP_STATS_DISPLAY          0  /* disable stating display function */
+#define LWIP_STATS                  1  /* disable stating */
+#define LWIP_STATS_DISPLAY          1  /* disable stating display function */
 #define LWIP_SO_RCVTIMEO            1  /* support timeouts for socket recv */
 #define LWIP_SO_SNDTIMEO            1  /* support timeouts for socket send */
 #define LWIP_TCP_TIMESTAMPS         1
