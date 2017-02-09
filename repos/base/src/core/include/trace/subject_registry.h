@@ -240,6 +240,8 @@ class Genode::Trace::Subject
 			Affinity::Location affinity;
 			unsigned prio;
 			unsigned id;
+			unsigned foc_id;
+			int	 pos_rq;
 			{
 				Locked_ptr<Source> source(_source);
 
@@ -249,11 +251,13 @@ class Genode::Trace::Subject
 					affinity       = info.affinity;
 					prio=info.prio;
 					id=info.id;
+					foc_id=info.foc_id;
+					pos_rq=info.pos_rq;
 
 				}
 			}
-			CPU_info info= CPU_info(_label, _name, _state(), _policy_id,
-			                    execution_time, affinity, prio, id
+			CPU_info info= CPU_info(_state(), _policy_id,
+			                    execution_time, affinity, prio, id, foc_id, pos_rq
 						);
 			return info;
 		}
@@ -288,12 +292,11 @@ class Genode::Trace::Subject
 			bool core2_is_online;
 			bool core3_is_online;
 			unsigned num_cores;
-			unsigned foc_id;
 			{
 				Locked_ptr<Source> source(_source);
 
 				if (source.is_valid()) {
-					Trace::Source::Info const info = source->info();
+					Trace::Source::Info const info = source->sched_info();
 					idle0=info.idle0;
 					idle1=info.idle1;
 					idle2=info.idle2;
@@ -303,10 +306,9 @@ class Genode::Trace::Subject
 					core2_is_online=info.core2_is_online;
 					core3_is_online=info.core3_is_online;
 					num_cores=info.num_cores;
-					foc_id=info.foc_id;
 				}
 			}
-			SCHEDULER_info info=SCHEDULER_info(idle0, idle1, idle2, idle3, core0_is_online, core1_is_online, core2_is_online, core3_is_online, num_cores, foc_id);
+			SCHEDULER_info info=SCHEDULER_info(idle0, idle1, idle2, idle3, core0_is_online, core1_is_online, core2_is_online, core3_is_online, num_cores);
 
 			return info;
 		}

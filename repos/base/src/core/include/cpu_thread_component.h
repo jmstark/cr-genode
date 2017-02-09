@@ -211,6 +211,10 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 
 		Trace::Source::Info trace_source_info() const
 		{
+      return { _session_label, _name,
+			         _platform_thread.execution_time(),
+			         _platform_thread.affinity() };
+			/*
 			return { _session_label, _name,
 			         _platform_thread.execution_time(),
 			         _platform_thread.affinity(),
@@ -218,6 +222,30 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 			         _platform_thread.id(),
 			         _platform_thread.foc_id(),
 			         _platform_thread.idle(0),
+			         _platform_thread.idle(1),
+			         _platform_thread.idle(2),
+			         _platform_thread.idle(3),
+			         _platform_thread.core_is_online(0),
+			         _platform_thread.core_is_online(1),
+			         _platform_thread.core_is_online(2),
+			         _platform_thread.core_is_online(3),
+			         _platform_thread.num_cores() };*/
+		}
+    Trace::Source::Dynamic_Info dynamic_info() const
+		{
+      return { _platform_thread.execution_time(),
+			         _platform_thread.affinity(),
+			         _platform_thread.prio(),
+			         _platform_thread.pos_rq() };
+		}
+    Trace::Source::Static_Info static_info() const
+		{
+      return { _platform_thread.id(),
+			         _platform_thread.foc_id() };
+		}
+    Trace::Source::Global_Info global_info() const
+		{
+      return { _platform_thread.idle(0),
 			         _platform_thread.idle(1),
 			         _platform_thread.idle(2),
 			         _platform_thread.idle(3),

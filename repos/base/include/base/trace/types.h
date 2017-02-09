@@ -118,42 +118,41 @@ class Genode::Trace::CPU_info
 
 	private:
 
-		Session_label      _session_label;
-		Thread_name        _thread_name;
 		State              _state;
 		Policy_id          _policy_id;
 		Execution_time     _execution_time;
 		Affinity::Location _affinity;
 		unsigned	   _prio;
 		unsigned	   _id;
+		unsigned	   _foc_id;	
+		int		   _pos_rq;
 
 
 	public:
 
 		CPU_info() : _state(INVALID) { }
 
-		CPU_info(Session_label const &session_label,
-		             Thread_name   const &thread_name,
-		             State state, Policy_id policy_id,
+		CPU_info(    State state, Policy_id policy_id,
 		             Execution_time execution_time,
 		             Affinity::Location affinity,
 			     unsigned prio,
-			     unsigned id
+			     unsigned id,
+			     unsigned foc_id,
+			     int pos_rq
 				)
 		:
-			_session_label(session_label), _thread_name(thread_name),
 			_state(state), _policy_id(policy_id),
-			_execution_time(execution_time), _affinity(affinity), _prio(prio), _id(id)
+			_execution_time(execution_time), _affinity(affinity), _prio(prio), _id(id), _foc_id(foc_id), _pos_rq(pos_rq)
 		{ }
 
-		Session_label const &session_label()  const { return _session_label; }
-		Thread_name   const &thread_name()    const { return _thread_name; }
 		State                state()          const { return _state; }
 		Policy_id            policy_id()      const { return _policy_id; }
 		Execution_time       execution_time() const { return _execution_time; }
 		Affinity::Location   affinity()       const { return _affinity; }
 		unsigned	     prio()	      const { return _prio; }
 		unsigned	     id()	      const { return _id; }
+		unsigned	     foc_id()	      const { return _foc_id; }
+		int		     pos_rq()	      const { return _pos_rq; }
 
 };
 
@@ -199,7 +198,7 @@ class Genode::Trace::SCHEDULER_info
 		bool		_core2_is_online;
 		bool		_core3_is_online;
 		unsigned	_num_cores;
-		long unsigned int	   _foc_id;
+		
 
 	public:
 
@@ -213,12 +212,11 @@ class Genode::Trace::SCHEDULER_info
 				bool core1_is_online,
 				bool core2_is_online,
 				bool core3_is_online,
-				unsigned num_cores,
-			    	long unsigned int foc_id)
+				unsigned num_cores)
 		:
 			_idle0(idle0), _idle1(idle1), _idle2(idle2), _idle3(idle3), _core0_is_online(core0_is_online), _core1_is_online(core1_is_online),
 			_core2_is_online(core2_is_online), _core3_is_online(core3_is_online),
-			_num_cores(num_cores), _foc_id(foc_id)
+			_num_cores(num_cores)
 		{}
 
 		Execution_time		idle0()			const { return _idle0; }
@@ -230,7 +228,6 @@ class Genode::Trace::SCHEDULER_info
 		bool			core2_is_online()	const { return _core2_is_online; }
 		bool			core3_is_online()	const { return _core3_is_online; }
 		unsigned		num_cores()		const { return _num_cores; }
-		long unsigned int	     foc_id()	      const { return _foc_id; }
 };
 
 #endif /* _INCLUDE__BASE__TRACE__TYPES_H_ */

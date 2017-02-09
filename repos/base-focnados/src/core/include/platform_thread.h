@@ -205,6 +205,8 @@ namespace Genode {
 
 			unsigned num_cores() const;
 
+			int pos_rq() const;
+
 			/*******************************
 			 ** Fiasco-specific Accessors **
 			 *******************************/

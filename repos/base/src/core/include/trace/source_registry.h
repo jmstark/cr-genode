@@ -59,6 +59,7 @@ class Genode::Trace::Source
 			unsigned	   prio;
 			unsigned	   id;
 			unsigned	   foc_id;
+			int		   pos_rq;
 			Execution_time	   idle0;
 			Execution_time	   idle1;
 			Execution_time	   idle2;
@@ -71,6 +72,30 @@ class Genode::Trace::Source
 			size_t 		   ram_quota;
 			size_t 		   ram_used;
 		};
+		struct Dynamic_Info
+		{
+			Execution_time     execution_time;
+			Affinity::Location affinity;
+			unsigned	   prio;
+			int		   pos_rq;
+		};
+		struct Static_Info
+		{
+			unsigned	   id;
+			unsigned	   foc_id;
+		};
+		struct Global_Info
+		{
+			Execution_time	   idle0;
+			Execution_time	   idle1;
+			Execution_time	   idle2;
+			Execution_time	   idle3;
+			bool		   core0_is_online;
+			bool		   core1_is_online;
+			bool		   core2_is_online;
+			bool		   core3_is_online;
+			unsigned	   num_cores;
+		};
 
 		/**
 		 * Interface for querying trace-source information
@@ -78,6 +103,9 @@ class Genode::Trace::Source
 		struct Info_accessor
 		{
 			virtual Info trace_source_info() const = 0;
+			virtual Dynamic_Info dynamic_info() const = 0;
+			virtual Static_Info static_info() const = 0;
+			virtual Global_Info global_info() const = 0;
 		};
 
 	private:
@@ -88,6 +116,8 @@ class Genode::Trace::Source
 		Dataspace_capability _policy;
 		Dataspace_capability _buffer;
 		Source_owner  const *_owner = nullptr;
+		unsigned	   id;
+		unsigned	   foc_id;
 		size_t _ram_quota=0;
 		size_t _ram_used=0;
 
@@ -124,9 +154,32 @@ class Genode::Trace::Source
 		Info const info() const 
 		{
 			
-			Info info=_info.trace_source_info();
+			Info info;
+			Dynamic_Info dyn=_info.dynamic_info();
+			Static_Info stat=_info.static_info();
+			info.id=stat.id;
+			info.foc_id=stat.id;
+			info.execution_time=dyn.execution_time;
+			info.affinity=dyn.affinity;
+			info.prio=dyn.prio;
 			info.ram_quota=_ram_quota;
 			info.ram_used=_ram_used;
+			info.pos_rq=dyn.pos_rq;
+			return info;
+		}
+		Info const sched_info() const
+		{
+			Info info;
+			Global_Info global=_info.global_info();
+			info.idle0=global.idle0;
+			info.idle1=global.idle1;
+			info.idle2=global.idle2;
+			info.idle3=global.idle3;
+			info.core0_is_online=global.core0_is_online;
+			info.core1_is_online=global.core1_is_online;
+			info.core2_is_online=global.core2_is_online;
+			info.core3_is_online=global.core3_is_online;
+			info.num_cores=global.num_cores;
 			return info;
 		}
 

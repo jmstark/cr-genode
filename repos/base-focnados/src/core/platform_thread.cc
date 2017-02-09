@@ -52,10 +52,6 @@ int Platform_thread::start(void *ip, void *sp)
 		     (unsigned long) _thread.local.data()->kcap());
 		return -1;
 	}
-
-	 PWRN("[Platform_thread: start] %lx started!",
-	                 (unsigned long) _thread.local.data()->kcap());
-
 	_state = RUNNING;
 
 	/* set ip and sp and run the thread */
@@ -352,6 +348,23 @@ unsigned Platform_thread::num_cores() const
 	l4_sched_cpu_set_t cpus = l4_sched_cpu_set(0, 0, 1);
 	l4_umword_t cpus_max;
 	return (unsigned)l4_scheduler_info(L4_BASE_SCHEDULER_CAP, &cpus_max, &cpus).raw;
+}
+
+int Platform_thread::pos_rq() const
+{
+	int _pos_rq=0;
+	l4_scheduler_get_rqs(L4_BASE_SCHEDULER_CAP);
+	//PDBG("Thread:%d\n",_id);
+	for(int i=1; i<=((int)l4_utcb_mr()->mr[0]);i++)
+	{
+		//PDBG("Elem in RQ:%d\n", (int)l4_utcb_mr()->mr[2*i-1]);
+		if(_id==l4_utcb_mr()->mr[2*i-1]) {
+			_pos_rq=l4_utcb_mr()->mr[2*i];
+			//PDBG("Pos RQ:%d\n", l4_utcb_mr()->mr[2*i]);
+		}
+	}
+	//PDBG("Objects:%d\n",((int)l4_utcb_mr()->mr[0]));
+	return _pos_rq;
 }
 
 Platform_thread::Platform_thread(size_t, const char *name, unsigned prio,
