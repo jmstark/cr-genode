@@ -53,6 +53,8 @@ namespace Genode {
 			unsigned           _prio;
 			unsigned           _dl;
 			long unsigned int  _id;
+			unsigned long long _start_time;
+			unsigned long long _arrival_time;
 
 			Affinity::Location _location;
 
@@ -192,6 +194,10 @@ namespace Genode {
 			 * Return execution time consumed by the thread
 			 */
 			unsigned long long execution_time() const;
+
+			unsigned long long start_time() const;
+
+			unsigned long long arrival_time() const;
 
 			unsigned prio() const;
 

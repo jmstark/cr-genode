@@ -56,6 +56,8 @@ class Genode::Trace::Source
 			Thread_name        name;
 			Execution_time     execution_time;
 			Affinity::Location affinity;
+			unsigned long long start_time;
+			unsigned long long arrival_time;
 			unsigned	   prio;
 			unsigned	   id;
 			unsigned	   foc_id;
@@ -76,6 +78,8 @@ class Genode::Trace::Source
 		{
 			Execution_time     execution_time;
 			Affinity::Location affinity;
+			unsigned long long start_time;
+			unsigned long long arrival_time;
 			unsigned	   prio;
 			int		   pos_rq;
 		};
@@ -160,6 +164,8 @@ class Genode::Trace::Source
 			info.id=stat.id;
 			info.foc_id=stat.id;
 			info.execution_time=dyn.execution_time;
+			info.start_time=dyn.start_time;
+			info.arrival_time=dyn.arrival_time;
 			info.affinity=dyn.affinity;
 			info.prio=dyn.prio;
 			info.ram_quota=_ram_quota;
