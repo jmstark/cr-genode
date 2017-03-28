@@ -437,6 +437,12 @@ void Cpu_session_component::_update_each_thread_quota()
 	for (; thread; thread = thread->next()) { _update_thread_quota(*thread); }
 }
 
+void Cpu_session_component::deploy_queue(Genode::Dataspace_capability ds)
+{
+	Cpu_thread_component * thread = _thread_list.first();
+	thread->platform_thread().deploy_queue(ds);
+}
+
 
 size_t Cpu_session_component::_weight_to_quota(size_t const weight) const {
 	return (weight * _quota) / _weight; }

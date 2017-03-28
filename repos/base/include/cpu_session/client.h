@@ -64,6 +64,9 @@ struct Genode::Cpu_session_client : Rpc_client<Cpu_session>
 	int transfer_quota(Cpu_session_capability session, size_t amount) override {
 		return call<Rpc_transfer_quota>(session, amount); }
 
+	void deploy_queue(Genode::Dataspace_capability ds) override {
+		call<Rpc_deploy_queue>(ds); }
+
 	Quota quota() override { return call<Rpc_quota>(); }
 
 	Capability<Native_cpu> native_cpu() override { return call<Rpc_native_cpu>(); }

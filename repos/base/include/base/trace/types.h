@@ -87,13 +87,6 @@ struct Genode::Trace::Execution_time
 	Execution_time(unsigned long long value) : value(value) { }
 };
 
-struct Genode::Trace::Threads
-{
-	unsigned long id[10];
-	unsigned prio[10];
-	int n;
-};
-
 /**
  * Subject information
  */

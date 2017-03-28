@@ -289,6 +289,7 @@ void Platform_thread::_finalize_construction(const char *name)
 	                        &params);
 	_id = l4_utcb_mr()->mr[0];
 	_arrival_time = l4_utcb_mr()->mr[1];
+	//PDBG("sched cap %d\n", L4_BASE_SCHEDULER_CAP);
 	//PDBG("name:%s id:%d arrived:%llu", name, _id, _arrival_time);
 }
 
@@ -370,17 +371,23 @@ int Platform_thread::pos_rq() const
 {
 	int _pos_rq=0;
 	l4_scheduler_get_rqs(L4_BASE_SCHEDULER_CAP);
-	//PDBG("Thread:%d\n",_id);
 	for(int i=1; i<=((int)l4_utcb_mr()->mr[0]);i++)
 	{
-		//PDBG("Elem in RQ:%d\n", (int)l4_utcb_mr()->mr[2*i-1]);
 		if(_id==l4_utcb_mr()->mr[2*i-1]) {
 			_pos_rq=l4_utcb_mr()->mr[2*i];
-			//PDBG("Pos RQ:%d\n", l4_utcb_mr()->mr[2*i]);
 		}
 	}
-	//PDBG("Objects:%d\n",((int)l4_utcb_mr()->mr[0]));
 	return _pos_rq;
+}
+
+void Platform_thread::deploy_queue(Genode::Dataspace_capability ds) const
+{
+	int *list = Genode::env()->rm_session()->attach(ds);
+	Fiasco::l4_msgtag_t tag = Fiasco::l4_scheduler_deploy_thread(Fiasco::L4_BASE_SCHEDULER_CAP, list);
+	if (Fiasco::l4_error(tag)){
+		PWRN("Scheduling queue has failed!\n");
+		return;
+	}
 }
 
 Platform_thread::Platform_thread(size_t, const char *name, unsigned prio,

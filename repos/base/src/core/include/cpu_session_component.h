@@ -178,9 +178,8 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		int ref_account(Cpu_session_capability c) override;
 		int transfer_quota(Cpu_session_capability, size_t) override;
 		Quota quota() override;
-
 		void set(Ram_session_capability ram_cap);
-
+		void deploy_queue(Genode::Dataspace_capability ds);
 		Capability<Native_cpu> native_cpu() override { return _native_cpu.cap(); }
 };
 
