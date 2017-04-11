@@ -443,6 +443,12 @@ void Cpu_session_component::deploy_queue(Genode::Dataspace_capability ds)
 	thread->platform_thread().deploy_queue(ds);
 }
 
+void Cpu_session_component::rq(Genode::Dataspace_capability ds)
+{
+	Cpu_thread_component * thread = _thread_list.first();
+	thread->platform_thread().rq(ds);
+}
+
 
 size_t Cpu_session_component::_weight_to_quota(size_t const weight) const {
 	return (weight * _quota) / _weight; }

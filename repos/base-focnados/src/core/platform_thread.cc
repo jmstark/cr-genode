@@ -367,17 +367,15 @@ unsigned Platform_thread::num_cores() const
 	return (unsigned)l4_scheduler_info(L4_BASE_SCHEDULER_CAP, &cpus_max, &cpus).raw;
 }
 
-int Platform_thread::pos_rq() const
+void Platform_thread::rq(Genode::Dataspace_capability ds) const
 {
-	int _pos_rq=0;
+	int *list = Genode::env()->rm_session()->attach(ds);
 	l4_scheduler_get_rqs(L4_BASE_SCHEDULER_CAP);
-	for(int i=1; i<=((int)l4_utcb_mr()->mr[0]);i++)
+	list[0]=l4_utcb_mr()->mr[0];
+	for(int i=1; i<=2*((int)l4_utcb_mr()->mr[0]);i++)
 	{
-		if(_id==l4_utcb_mr()->mr[2*i-1]) {
-			_pos_rq=l4_utcb_mr()->mr[2*i];
-		}
+		list[i]=l4_utcb_mr()->mr[i];
 	}
-	return _pos_rq;
 }
 
 void Platform_thread::deploy_queue(Genode::Dataspace_capability ds) const
