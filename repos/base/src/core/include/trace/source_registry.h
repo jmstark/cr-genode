@@ -166,7 +166,7 @@ class Genode::Trace::Source
 			info.label=stat.label;
 			info.name=stat.name;
 			info.id=stat.id;
-			info.foc_id=stat.id;
+			info.foc_id=stat.foc_id;
 			info.execution_time=dyn.execution_time;
 			info.start_time=dyn.start_time;
 			info.arrival_time=dyn.arrival_time;
