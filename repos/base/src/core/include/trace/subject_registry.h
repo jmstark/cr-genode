@@ -270,6 +270,8 @@ class Genode::Trace::Subject
 		{
 			size_t ram_quota;
 			size_t ram_used;
+			Session_label label;
+			Thread_name name;
 			{
 				Locked_ptr<Source> source(_source);
 
@@ -277,6 +279,8 @@ class Genode::Trace::Subject
 					Trace::Source::Info const info = source->info();
 					ram_quota= info.ram_quota;
 					ram_used= info.ram_used;
+					label=info.label;
+					name=info.name;
 				}
 			}
 			RAM_info info= RAM_info(_label, _name,

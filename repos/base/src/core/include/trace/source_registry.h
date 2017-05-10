@@ -85,6 +85,8 @@ class Genode::Trace::Source
 		};
 		struct Static_Info
 		{
+			Session_label      label;
+			Thread_name        name;
 			unsigned	   id;
 			unsigned	   foc_id;
 		};
@@ -161,6 +163,8 @@ class Genode::Trace::Source
 			Info info;
 			Dynamic_Info dyn=_info.dynamic_info();
 			Static_Info stat=_info.static_info();
+			info.label=stat.label;
+			info.name=stat.name;
 			info.id=stat.id;
 			info.foc_id=stat.id;
 			info.execution_time=dyn.execution_time;

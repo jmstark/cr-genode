@@ -241,7 +241,9 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 		}
     Trace::Source::Static_Info static_info() const
 		{
-      return { _platform_thread.id(),
+      return { _session_label,
+			         _name,
+			         _platform_thread.id(),
 			         _platform_thread.foc_id() };
 		}
     Trace::Source::Global_Info global_info() const
