@@ -57,14 +57,12 @@ int Cpu_session_component::get_sched_type(unsigned core){
 	return _sched_type[core];
 }
 
-Thread_capability Cpu_session_component::create_fp_edf_thread(size_t weight,
-															Name const &name,
-															addr_t utcb,
-															unsigned priority,
-															unsigned deadline,
-															unsigned cpu)
+Thread_capability Cpu_session_component::create_thread(size_t weight,
+                                                       Name const &name,
+                                                       addr_t utcb,
+													   sched_analyse_param_t param,
+													   int cpu)
 {
-
 	unsigned trace_control_index = 0;
 	if (!_trace_control_area.alloc(trace_control_index))
 		throw Out_of_metadata();
@@ -76,15 +74,10 @@ Thread_capability Cpu_session_component::create_fp_edf_thread(size_t weight,
 
 	Cpu_thread_component *thread = 0;
 
-	if (_sched_type[cpu] == FIXED_PRIO && priority == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", cpu);
-		throw Cpu_session::Thread_creation_failed();
+	if (_sched_type[cpu] != param.sched_type && cpu >= 0){
+			PERR("Wrong Scheduling Type on CPU %d!", cpu);
+			throw Cpu_session::Thread_creation_failed();
 	}
-	if(_sched_type[cpu] == DEADLINE && deadline == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected EDF", cpu);
-		throw Cpu_session::Thread_creation_failed();
-	}
-
 
 	if (weight == 0) {
 		PWRN("Thread %s: Bad weight 0, using %i instead.",
@@ -99,70 +92,27 @@ Thread_capability Cpu_session_component::create_fp_edf_thread(size_t weight,
 	Lock::Guard thread_list_lock_guard(_thread_list_lock);
 	_incr_weight(weight);
 
-	Affinity::Location location(cpu, 0);
+
+	//If cpu is default parameter, use the location of the cpu_session
+	Affinity::Location location;
+	if (cpu < 0){
+		location = _location;
+	}
+	else {
+		Affinity::Location loc(cpu, 0);
+		location = loc;
+	}
 
 	try {
 		Lock::Guard slab_lock_guard(_thread_alloc_lock);
 		thread = new(&_thread_alloc)
 			Cpu_thread_component(
 				weight, _weight_to_quota(weight), _label, thread_name,
-				priority, deadline, utcb, _default_exception_handler,
+				param, utcb, _default_exception_handler,
 				trace_control_index, *trace_control, location);
 
 		/* set default affinity defined by CPU session */
 		thread->platform_thread()->affinity(location);
-	} catch (Allocator::Out_of_memory) {
-		throw Out_of_metadata();
-	}
-
-	_thread_list.insert(thread);
-
-	_trace_sources.insert(thread->trace_source());
-
-	return _thread_ep->manage(thread);
-
-}
-
-
-
-Thread_capability Cpu_session_component::create_thread(size_t weight,
-                                                       Name const &name,
-                                                       addr_t utcb)
-{
-	unsigned trace_control_index = 0;
-	if (!_trace_control_area.alloc(trace_control_index))
-		throw Out_of_metadata();
-
-	Trace::Control * const trace_control =
-		_trace_control_area.at(trace_control_index);
-
-	Trace::Thread_name thread_name(name.string());
-
-	Cpu_thread_component *thread = 0;
-
-	if (weight == 0) {
-		PWRN("Thread %s: Bad weight 0, using %i instead.",
-		     name.string(), DEFAULT_WEIGHT);
-		weight = DEFAULT_WEIGHT;
-	}
-	if (weight > QUOTA_LIMIT) {
-		PWRN("Thread %s: Oversized weight %zu, using %i instead.",
-		     name.string(), weight, QUOTA_LIMIT);
-		weight = QUOTA_LIMIT;
-	}
-	Lock::Guard thread_list_lock_guard(_thread_list_lock);
-	_incr_weight(weight);
-
-	try {
-		Lock::Guard slab_lock_guard(_thread_alloc_lock);
-		thread = new(&_thread_alloc)
-			Cpu_thread_component(
-				weight, _weight_to_quota(weight), _label, thread_name,
-				_priority, utcb, _default_exception_handler,
-				trace_control_index, *trace_control);
-
-		/* set default affinity defined by CPU session */
-		thread->platform_thread()->affinity(_location);
 	} catch (Allocator::Out_of_memory) {
 		throw Out_of_metadata();
 	}

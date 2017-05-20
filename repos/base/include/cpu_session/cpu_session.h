@@ -48,6 +48,7 @@ struct Genode::Cpu_session : Session
 	enum { QUOTA_LIMIT = 1 << QUOTA_LIMIT_LOG2 };
 	enum { DEFAULT_PRIORITY = 0 };
 	enum { DEFAULT_WEIGHT = 10 };
+	enum sched_type {UNDEFINED = 0, FP = 1, EDF = 2};
 
 	typedef Rpc_in_buffer<THREAD_NAME_LEN> Name;
 
@@ -57,6 +58,15 @@ struct Genode::Cpu_session : Session
 	struct Quota;
 
 	virtual ~Cpu_session() { }
+
+	struct sched_analyse_param_t{
+		sched_analyse_param_t(): sched_type(FP), deadline(0.0), wcet(0.0), inter_arrival(0.0){ };
+		int sched_type;
+		int priority;
+		float deadline;
+		float wcet;
+		float inter_arrival;
+	};
 
 	/**
 	 * Create a new thread
@@ -71,13 +81,9 @@ struct Genode::Cpu_session : Session
 	 */
 	virtual Thread_capability create_thread(size_t quota,
 	                                        Name const &name,
-	                                        addr_t utcb = 0) = 0;
-
-	virtual Thread_capability create_fp_edf_thread(size_t quota,
-	                                        Name const &name,
 	                                        addr_t utcb = 0,
-											unsigned priority = 0,
-											unsigned deadline = 0, unsigned cpu = 0) = 0;
+											sched_analyse_param_t param = sched_analyse_param_t(),
+											int cpu = -1) = 0;
 
 	/**
 	 * Set sched_type for the given core
@@ -333,10 +339,7 @@ struct Genode::Cpu_session : Session
 
 	GENODE_RPC_THROW(Rpc_create_thread, Thread_capability, create_thread,
 	                 GENODE_TYPE_LIST(Thread_creation_failed, Out_of_metadata),
-	                 size_t, Name const &, addr_t);
-	GENODE_RPC_THROW(Rpc_create_fp_edf_thread, Thread_capability, create_fp_edf_thread,
-					 GENODE_TYPE_LIST(Thread_creation_failed, Out_of_metadata),
-					 size_t, Name const &, addr_t, unsigned, unsigned, unsigned);
+	                 size_t, Name const &, addr_t, sched_analyse_param_t, int);
 	GENODE_RPC(Rpc_set_sched_type, int, set_sched_type, unsigned, unsigned);
 	GENODE_RPC(Rpc_get_sched_type, int, get_sched_type, unsigned);
 	GENODE_RPC(Rpc_utcb, Ram_dataspace_capability, utcb, Thread_capability);
@@ -377,7 +380,6 @@ struct Genode::Cpu_session : Session
 	 * of employing the convenience macro 'GENODE_RPC_INTERFACE'.
 	 */
 	typedef Meta::Type_tuple<Rpc_create_thread,
-		Meta::Type_tuple<Rpc_create_fp_edf_thread,
 		Meta::Type_tuple<Rpc_set_sched_type,
 		Meta::Type_tuple<Rpc_get_sched_type,
 	        Meta::Type_tuple<Rpc_utcb,
@@ -404,7 +406,7 @@ struct Genode::Cpu_session : Session
 		Meta::Type_tuple<Rpc_deploy_queue,
 		Meta::Type_tuple<Rpc_rq,
 	                         Meta::Empty>
-	        > > > > > > > > > > > > > > > > > > > > > > > > > > Rpc_functions;
+	        > > > > > > > > > > > > > > > > > > > > > > > > > Rpc_functions;
 };
 
 struct Genode::Cpu_session::Quota

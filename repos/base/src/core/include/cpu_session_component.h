@@ -285,8 +285,7 @@ namespace Genode {
 
 			int set_sched_type(unsigned core, unsigned sched_type);
 			int get_sched_type(unsigned core);
-			Thread_capability create_thread(size_t, Name const &, addr_t);
-			Thread_capability create_fp_edf_thread(size_t, Name const &, addr_t,unsigned ,unsigned, unsigned);
+			Thread_capability create_thread(size_t, Name const &, addr_t, sched_analyse_param_t, int);
 			Ram_dataspace_capability utcb(Thread_capability thread);
 			void kill_thread(Thread_capability);
 			int set_pager(Thread_capability, Pager_capability);
