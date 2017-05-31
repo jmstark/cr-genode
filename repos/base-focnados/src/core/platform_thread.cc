@@ -205,9 +205,9 @@ void Platform_thread::affinity(Affinity::Location location)
 
 	l4_sched_param_t params;
 	/* set priority of thread */
-	if (_dl<=0)
+	if (_sched_type == Cpu_session::sched_type::FP)
 		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
-	else if(_prio<=0)
+	else if(_sched_type == Cpu_session::sched_type::EDF)
 		params = l4_sched_param_by_type(Deadline, _dl, 0);
 	else{
 		PWRN("wrong scheduling type");

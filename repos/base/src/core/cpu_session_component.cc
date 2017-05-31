@@ -74,7 +74,7 @@ Thread_capability Cpu_session_component::create_thread(size_t weight,
 
 	Cpu_thread_component *thread = 0;
 
-	if (_sched_type[cpu] != param.sched_type && cpu >= 0){
+	if (_sched_type[cpu] != param.sched_type && cpu >= 0 && _sched_type[cpu] != Cpu_session::sched_type::UNDEFINED){
 			PERR("Wrong Scheduling Type on CPU %d!", cpu);
 			throw Cpu_session::Thread_creation_failed();
 	}
