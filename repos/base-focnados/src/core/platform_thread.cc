@@ -264,9 +264,9 @@ void Platform_thread::_finalize_construction(const char *name)
 
 	l4_sched_param_t params;
 	/* set priority of thread */
-	if (_dl<=0)
+	if (_sched_type == Cpu_session::sched_type::FP)
 		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
-	else if(_prio<=0)
+	else if(_sched_type == Cpu_session::sched_type::EDF)
 		params = l4_sched_param_by_type(Deadline, _dl, 0);
 	else{
 		PWRN("wrong scheduling type");
@@ -296,6 +296,7 @@ Platform_thread::Platform_thread(const char *name, unsigned prio, addr_t)
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
+  _sched_type(Cpu_session::sched_type::FP),
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
   _dl(0)
 {
@@ -403,7 +404,7 @@ void Platform_thread::deploy_queue(Genode::Dataspace_capability ds) const
 		}
 }
 
-Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadline, Affinity::Location location, addr_t)
+Platform_thread::Platform_thread(const char *name, int sched_type, int priority, float deadline, Affinity::Location location, addr_t)
 : _state(DEAD),
   _core_thread(false),
   _thread(true),
@@ -411,7 +412,8 @@ Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadl
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
-  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
+  _sched_type(sched_type),
+  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, priority)),
   _dl(deadline)
 {
 	((Core_cap_index*)_thread.local.idx())->pt(this);
@@ -430,6 +432,7 @@ Platform_thread::Platform_thread(Core_cap_index* thread,
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
+  _sched_type(Cpu_session::sched_type::FP),
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0)),
   _dl(0)
 {
@@ -446,6 +449,7 @@ Platform_thread::Platform_thread(const char *name)
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
+  _sched_type(Cpu_session::sched_type::FP),
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0)),
   _dl(0)
 {

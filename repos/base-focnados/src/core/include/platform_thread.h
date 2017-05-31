@@ -51,8 +51,9 @@ namespace Genode {
 			Platform_pd       *_platform_pd;    /* protection domain thread
 			                                      is bound to */
 			Pager_object      *_pager_obj;
-			unsigned           _prio;
-			unsigned	   _dl;		
+			int				  _sched_type;
+			int     	      _prio;
+			float			  _dl;
 			long unsigned int  _id;
 			unsigned long long _start_time;
 			unsigned long long _arrival_time;
@@ -77,7 +78,7 @@ namespace Genode {
 			/**
 			 * Constructor for fp-edf non-core threads
 			 */
-			Platform_thread(const char *name, unsigned priority, unsigned deadline, Affinity::Location location, addr_t);
+			Platform_thread(const char *name, int sched_type, int priority, float deadline, Affinity::Location location, addr_t);
 
 			/**
 			 * Constructor for core main-thread
