@@ -371,8 +371,19 @@ void Platform_thread::rq(Genode::Dataspace_capability ds) const
 {
 	int *list = Genode::env()->rm_session()->attach(ds);
 	l4_scheduler_get_rqs(L4_BASE_SCHEDULER_CAP);
-	list[0]=l4_utcb_mr()->mr[0];
+	list[0]=(int)l4_utcb_mr()->mr[0];
 	for(int i=1; i<=2*((int)l4_utcb_mr()->mr[0]);i++)
+	{
+		list[i]=l4_utcb_mr()->mr[i];
+	}
+}
+
+void Platform_thread::dead(Genode::Dataspace_capability ds) const
+{
+	long long unsigned *list = Genode::env()->rm_session()->attach(ds);
+	l4_scheduler_get_dead(L4_BASE_SCHEDULER_CAP);
+	list[0]=(long long unsigned)l4_utcb_mr()->mr[0];
+	for(long long unsigned i=1; i<=2*((long long unsigned)l4_utcb_mr()->mr[0]);i++)
 	{
 		list[i]=l4_utcb_mr()->mr[i];
 	}

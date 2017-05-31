@@ -213,6 +213,8 @@ namespace Genode {
 
 			void rq(Genode::Dataspace_capability ds) const;
 
+			void dead(Genode::Dataspace_capability ds) const;
+
 			void deploy_queue(Genode::Dataspace_capability ds) const;
 
 			/*******************************
