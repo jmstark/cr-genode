@@ -187,7 +187,7 @@ namespace Genode {
 			 * Allocator used for managing the CPU threads associated with the
 			 * CPU session
 			 */
-			typedef Tslab<Cpu_thread_component, 1024> Cpu_thread_allocator;
+			typedef Tslab<Cpu_thread_component, 2048> Cpu_thread_allocator;
 
 			Session_label              _label;
 			Rpc_entrypoint            *_session_ep;
