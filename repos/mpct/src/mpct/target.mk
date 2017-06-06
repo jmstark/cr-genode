@@ -1,4 +1,4 @@
 TARGET = mpct
 SRC_CC = main.cpp
-INC_DIR += $(REP_DIR)/../libports/include/lwip
+INC_DIR += /home/alex/Projects/genode/repos/libports/include/lwip/
 LIBS   = base libmosquitto stdcxx lwip pthread
