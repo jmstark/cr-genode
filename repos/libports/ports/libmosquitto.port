@@ -1,7 +1,0 @@
-VERSION   := 1.4.11
-DOWNLOADS := mosquitto.archive
-LICENSE   := other
-
-URL(mosquitto) := https://mosquitto.org/files/source/mosquitto-$(VERSION).tar.gz
-SHA(mosquitto) := 86788e801eec01538c57a55345749f2c5b99a3ad
-DIR(mosquitto) := src/lib/libmosquitto
