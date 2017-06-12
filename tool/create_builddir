@@ -47,6 +47,10 @@ usage:
 	@echo "                  'foc_arndale'"
 	@echo "                  'foc_rpi'"
 	@echo "                  'foc_odroid_x2'"
+	@echo "                  'focnados_x86_32'"
+	@echo "                  'focnados_x86_64'"
+	@echo "                  'focnados_pbxa9'"
+	@echo "                  'focnados_panda'"
 	@echo "                  'sel4_x86_32'"
 	@echo
 	@echo "  The definition of BUILD_DIR is optional. If specified,"
@@ -111,7 +115,7 @@ $(BUILD_DIR)/etc/build.conf:: $(BUILD_CONF_PLATFORM)
 #
 # Supply -no-kvm argument to Qemu for kernels that are incompatible with KVM
 #
-ifeq ($(filter-out foc_x86_32 foc_x86_64 okl4_x86 nova_x86_32 nova_x86_64 pistachio_x86,$(PLATFORM)),)
+ifeq ($(filter-out foc_x86_32 foc_x86_64 focnados_x86_32 focnados_x86_64 okl4_x86 nova_x86_32 nova_x86_64 pistachio_x86,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).qemu_no_kvm >> $@
 endif
@@ -143,7 +147,7 @@ $(BUILD_DIR)/Makefile:
 #
 # Add 'ports-foc' repository to Fiasco.OC build directory
 #
-ifeq ($(filter-out foc_x86_32 foc_imx53 foc_pbxa9 foc_panda foc_arndale foc_rpi foc_odroid_x2,$(PLATFORM)),)
+ifeq ($(filter-out focnados_x86_32 foc_x86_32 foc_imx53 focnados_pbxa9 foc_pbxa9 focnados_panda foc_panda foc_arndale foc_rpi foc_odroid_x2,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).ports-foc >> $@
 endif
@@ -151,7 +155,7 @@ endif
 #
 # Add x86 drivers repositories to x86 build directories
 #
-ifeq ($(filter-out foc_x86_32 foc_x86_64 okl4_x86 nova_x86_32 nova_x86_64 pistachio_x86 fiasco_x86 hw_x86_64 hw_x86_64_muen sel4_x86_32,$(PLATFORM)),)
+ifeq ($(filter-out focnados_x86_32 foc_x86_32 focnados_x86_64 foc_x86_64 okl4_x86 nova_x86_32 nova_x86_64 pistachio_x86 fiasco_x86 hw_x86_64 hw_x86_64_muen sel4_x86_32,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).drivers_x86 >> $@
 endif
@@ -159,7 +163,7 @@ endif
 #
 # Add ARM drivers repositories to ARM build directories
 #
-ifeq ($(filter-out foc_panda foc_arndale hw_panda hw_arndale hw_odroid_xu foc_imx53 foc_rpi foc_odroid_x2,$(PLATFORM)),)
+ifeq ($(filter-out focnados_panda foc_panda foc_arndale hw_panda hw_arndale hw_odroid_xu foc_imx53 foc_rpi foc_odroid_x2,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).drivers_arm >> $@
 endif
@@ -182,6 +186,14 @@ foc_x86_64::
 	@echo "SPECS = genode foc_x86_64" > $(BUILD_DIR)/etc/specs.conf
 	@echo "SPECS += acpi"             >> $(BUILD_DIR)/etc/specs.conf
 
+focnados_x86_32::
+	@echo "SPECS  = genode focnados_x86_32" > $(BUILD_DIR)/etc/specs.conf
+	@echo "SPECS += acpi"             >> $(BUILD_DIR)/etc/specs.conf
+
+focnados_x86_64::
+	@echo "SPECS = genode focnados_x86_64" > $(BUILD_DIR)/etc/specs.conf
+	@echo "SPECS += acpi"             >> $(BUILD_DIR)/etc/specs.conf
+
 nova_x86_32::
 	@echo "SPECS  = genode nova_x86_32" > $(BUILD_DIR)/etc/specs.conf
 	@echo "SPECS += acpi"              >> $(BUILD_DIR)/etc/specs.conf
@@ -199,6 +211,12 @@ foc_pbxa9::
 
 foc_panda::
 	@echo "SPECS = genode foc_panda" > $(BUILD_DIR)/etc/specs.conf
+
+focnados_pbxa9::
+	@echo "SPECS = genode focnados_pbxa9" > $(BUILD_DIR)/etc/specs.conf
+
+focnados_panda::
+	@echo "SPECS = genode focnados_panda" > $(BUILD_DIR)/etc/specs.conf
 
 foc_imx53::
 	@echo "SPECS = genode foc_imx53" > $(BUILD_DIR)/etc/specs.conf
