@@ -91,8 +91,7 @@ struct Genode::Cpu_session : Session
 																				Weight                 weight,
 																				addr_t                 utcb = 0,
 																				unsigned               priority = 0,
-																				unsigned               deadline = 0,
-																				unsigned               cpu = 0) = 0;
+																				unsigned               deadline = 0) = 0;
 
 	/**
 	 * Set sched_type for the given core
@@ -249,7 +248,7 @@ struct Genode::Cpu_session : Session
 	GENODE_RPC_THROW(Rpc_create_fp_edf_thread, Thread_capability, create_fp_edf_thread,
 	                 GENODE_TYPE_LIST(Thread_creation_failed, Out_of_metadata),
 									 Capability<Pd_session>, Name const &, Affinity::Location,
-									 Weight, addr_t, unsigned, unsigned, unsigned);
+									 Weight, addr_t, unsigned, unsigned);
 	GENODE_RPC(Rpc_set_sched_type, int, set_sched_type, unsigned, unsigned);
 	GENODE_RPC(Rpc_get_sched_type, int, get_sched_type, unsigned);
 	GENODE_RPC(Rpc_kill_thread, void, kill_thread, Thread_capability);

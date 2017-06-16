@@ -170,7 +170,7 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		                                Affinity::Location, Weight, addr_t) override;
 		Thread_capability create_fp_edf_thread(Capability<Pd_session>, Name const &,
 		                                Affinity::Location, Weight, addr_t,
-		                                unsigned, unsigned, unsigned) override;
+		                                unsigned, unsigned) override;
 		void kill_thread(Thread_capability) override;
 		void exception_sigh(Signal_context_capability) override;
 		Affinity::Space affinity_space() const override;

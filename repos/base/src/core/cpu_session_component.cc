@@ -56,19 +56,18 @@ Thread_capability Cpu_session_component::create_fp_edf_thread(Capability<Pd_sess
 															Weight weight,
 															addr_t utcb,
 															unsigned priority,
-															unsigned deadline,
-															unsigned cpu)
+															unsigned deadline)
 {
   Trace::Thread_name thread_name(name.string());
 
 	Cpu_thread_component *thread = 0;
 
-	if (_sched_type[cpu] == FIXED_PRIO && priority == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", cpu);
+	if (_sched_type[affinity.xpos()] == FIXED_PRIO && priority == 0){
+		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", affinity.xpos());
 		throw Cpu_session::Thread_creation_failed();
 	}
-	if(_sched_type[cpu] == DEADLINE && deadline == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected EDF", cpu);
+	if(_sched_type[affinity.xpos()] == DEADLINE && deadline == 0){
+		PERR("Wrong Scheduling Type on CPU %d, expected EDF", affinity.xpos());
 		throw Cpu_session::Thread_creation_failed();
 	}
 
