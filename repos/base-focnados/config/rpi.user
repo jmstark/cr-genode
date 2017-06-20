@@ -36,7 +36,7 @@ CONFIG_CPU_ARMV6PLUS=y
 # CONFIG_PLATFORM_TYPE_imx6 is not set
 # CONFIG_PLATFORM_TYPE_cubieboard2 is not set
 # CONFIG_PLATFORM_TYPE_omap3_am33xx is not set
-# CONFIG_PLATFORM_TYPE_rpi_b is not set
+CONFIG_PLATFORM_TYPE_rpi_b=y
 # CONFIG_PLATFORM_TYPE_rv_vexpress_a15 is not set
 # CONFIG_PLATFORM_TYPE_imx51 is not set
 # CONFIG_PLATFORM_TYPE_omap3evm is not set
@@ -44,10 +44,10 @@ CONFIG_CPU_ARMV6PLUS=y
 # CONFIG_PLATFORM_TYPE_imx21 is not set
 # CONFIG_PLATFORM_TYPE_omap5 is not set
 # CONFIG_PLATFORM_TYPE_rv_vexpress is not set
-CONFIG_PLATFORM_TYPE_rpi_a=y
+# CONFIG_PLATFORM_TYPE_rpi_a is not set
 # CONFIG_PLATFORM_TYPE_integrator is not set
 # CONFIG_PLATFORM_TYPE_custom is not set
-CONFIG_PLATFORM_TYPE="rpi_a"
+CONFIG_PLATFORM_TYPE="rpi_b"
 # CONFIG_USE_DROPS_STDDIR is not set
 # CONFIG_USE_DICE is not set
 CONFIG_DROPS_STDDIR="/path/to/l4re"
