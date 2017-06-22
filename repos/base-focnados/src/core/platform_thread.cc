@@ -404,7 +404,7 @@ void Platform_thread::deploy_queue(Genode::Dataspace_capability ds) const
 		}
 }
 
-Platform_thread::Platform_thread(const char *name, int sched_type, int priority, float deadline, Affinity::Location location, addr_t)
+Platform_thread::Platform_thread(const char *name, int sched_type, int priority, unsigned long long deadline, Affinity::Location location, addr_t)
 : _state(DEAD),
   _core_thread(false),
   _thread(true),

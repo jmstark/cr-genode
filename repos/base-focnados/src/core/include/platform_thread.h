@@ -53,7 +53,7 @@ namespace Genode {
 			Pager_object      *_pager_obj;
 			int				  _sched_type;
 			int     	      _prio;
-			float			  _dl;
+			unsigned long long _dl;
 			long unsigned int  _id;
 			unsigned long long _start_time;
 			unsigned long long _arrival_time;
@@ -78,7 +78,7 @@ namespace Genode {
 			/**
 			 * Constructor for fp-edf non-core threads
 			 */
-			Platform_thread(const char *name, int sched_type, int priority, float deadline, Affinity::Location location, addr_t);
+			Platform_thread(const char *name, int sched_type, int priority, unsigned long long deadline, Affinity::Location location, addr_t);
 
 			/**
 			 * Constructor for core main-thread

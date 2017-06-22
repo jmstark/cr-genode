@@ -63,9 +63,9 @@ struct Genode::Cpu_session : Session
 		sched_analyse_param_t(): sched_type(FP), deadline(0.0), wcet(0.0), inter_arrival(0.0){ };
 		int sched_type;
 		int priority;
-		float deadline;
-		float wcet;
-		float inter_arrival;
+		unsigned long long deadline;
+		unsigned long long wcet;
+		unsigned long long inter_arrival;
 	};
 
 	/**
