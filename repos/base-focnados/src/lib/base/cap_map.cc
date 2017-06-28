@@ -38,7 +38,9 @@ Genode::Cap_index* Genode::Cap_index::find_by_id(Genode::uint16_t id)
 
 	if (_id == id) return this;
 
-	Cap_index *n = Avl_node<Cap_index>::child(id > _id);
+	// Modification for Checkpoint/Restore (rtcr)
+	//Cap_index *n = Avl_node<Cap_index>::child(id > _id);
+	Cap_index *n = next();
 	return n ? n->find_by_id(id) : 0;
 }
 

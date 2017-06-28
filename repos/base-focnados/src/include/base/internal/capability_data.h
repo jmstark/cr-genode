@@ -17,6 +17,7 @@
 
 /* Genode includes */
 #include <base/capability.h>
+#include <util/list.h>
 
 /**
  * A Native_capability::Data object represents a single mapping of the global
@@ -26,7 +27,8 @@
  * (platform-specific) capability space of the component. Therefore it
  * shouldn't be copied around, but only referenced by e.g. Native_capability.
  */
-class Genode::Native_capability::Data : public Avl_node<Data>, Noncopyable
+ // Modification for Checkpoint/Restore (rtcr)
+class Genode::Native_capability::Data : public List<Data>::Element, Noncopyable
 {
 	private:
 
@@ -60,4 +62,3 @@ class Genode::Native_capability::Data : public Avl_node<Data>, Noncopyable
 };
 
 #endif /* _INCLUDE__BASE__INTERNAL__CAPABILITY_DATA_H_ */
-

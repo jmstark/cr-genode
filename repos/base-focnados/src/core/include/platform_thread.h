@@ -63,6 +63,11 @@ namespace Genode {
 			void _create_thread1(void);
 			void _finalize_construction1(const char *name);
 			bool _in_syscall(Fiasco::l4_umword_t flags);
+			// START Modification for Checkpoint/Restore (rtcr)
+			void _pack_regs(Thread_state const& regs, addr_t* array);
+			void _unpack_regs(Thread_state& regs, addr_t* array);
+			void _set_regs(addr_t* array, addr_t value);
+			// END Modification for Checkpoint/Restore (rtcr)
 
 		public:
 
@@ -152,6 +157,18 @@ namespace Genode {
 			 * \throw Cpu_session::State_access_failed
 			 */
 			Thread_state state();
+
+			// START Modification for Checkpoint/Restore (rtcr)
+			/**
+			 * Override thread's registers with s
+			 */
+			void all_regs(Thread_state const &s);
+
+			/**
+			 * Read thread's registers
+			 */
+			Thread_state all_regs();
+			// END Modification for Checkpoint/Restore (rtcr)
 
 			/**
 			 * Set the executing CPU for this thread
