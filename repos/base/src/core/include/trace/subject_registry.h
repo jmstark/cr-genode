@@ -238,12 +238,12 @@ class Genode::Trace::Subject
 		{
 			Execution_time execution_time;
 			Affinity::Location affinity;
-			unsigned long long start_time;
-			unsigned long long arrival_time;
-			unsigned prio;
-			unsigned id;
-			unsigned foc_id;
-			int	 pos_rq;
+			unsigned long long start_time = 0;
+			unsigned long long arrival_time = 0;
+			unsigned prio = 0;
+			unsigned id = 0;
+			unsigned foc_id = 0;
+			int	 pos_rq = 0;
 			{
 				Locked_ptr<Source> source(_source);
 
@@ -268,8 +268,8 @@ class Genode::Trace::Subject
 
 		RAM_info info_ram()
 		{
-			size_t ram_quota;
-			size_t ram_used;
+			size_t ram_quota = 0;
+			size_t ram_used = 0;
 			Session_label label;
 			Thread_name name;
 			{
@@ -295,11 +295,11 @@ class Genode::Trace::Subject
 			Execution_time idle1;
 			Execution_time idle2;
 			Execution_time idle3;
-			bool core0_is_online;
-			bool core1_is_online;
-			bool core2_is_online;
-			bool core3_is_online;
-			unsigned num_cores;
+			bool core0_is_online = false;
+			bool core1_is_online = false;
+			bool core2_is_online = false;
+			bool core3_is_online = false;
+			unsigned num_cores = 0;
 			{
 				Locked_ptr<Source> source(_source);
 

@@ -81,7 +81,7 @@ unsigned long Platform_timer::curr_time() const
 	static Fiasco::l4_kernel_info_t * const kip =
 		kip_ds.local_addr<Fiasco::l4_kernel_info_t>();
 
-	return kip->clock;
+	return l4_kip_clock(kip);
 }
 
 

@@ -278,7 +278,7 @@ Ram_session_component::Ram_session_component(Rpc_entrypoint  *ds_ep,
 
 void Ram_session_component::set_label(char *label)
 {
-	label="init\0";
+	label=(char *)"init\0";
 	strncpy(_label, label, 64);
 }
 
