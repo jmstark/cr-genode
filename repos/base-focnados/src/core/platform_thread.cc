@@ -408,7 +408,8 @@ Platform_thread::Platform_thread(size_t, const char *name, unsigned prio,
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
-  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio))
+  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
+  _dl(0)
 {
 	/* XXX remove const cast */
 	((Core_cap_index *)_thread.local.data())->pt(this);
@@ -447,7 +448,8 @@ Platform_thread::Platform_thread(Core_cap_index* thread,
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
-  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0))
+  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0)),
+  _dl(0)
 {
 	/* XXX remove const cast */
 	((Core_cap_index *)_thread.local.data())->pt(this);
@@ -463,7 +465,8 @@ Platform_thread::Platform_thread(const char *name)
   _utcb(0),
   _platform_pd(0),
   _pager_obj(0),
-  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0))
+  _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, 0)),
+  _dl(0)
 {
 	/* XXX remove const cast */
 	((Core_cap_index *)_thread.local.data())->pt(this);
