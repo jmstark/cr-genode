@@ -339,7 +339,8 @@ extern "C" {
 
 			/* If no timeout is requested, we have to track the time ourself */
 			if (!timeout) {
-				Alarm::Time starttime = Timeout_thread::alarm_timer()->time();
+				//TO DO find better solution than quick dirty fix with 0
+				Alarm::Time starttime = 0;//Timeout_thread::alarm_timer()->time();
 				_sem->down();
 				return Timeout_thread::alarm_timer()->time() - starttime;
 			} else {
