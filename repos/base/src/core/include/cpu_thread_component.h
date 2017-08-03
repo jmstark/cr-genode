@@ -237,6 +237,7 @@ class Genode::Cpu_thread_component : public Rpc_object<Cpu_thread>,
 			         _platform_thread.affinity(),
 			         _platform_thread.start_time(),
 			         _platform_thread.arrival_time(),
+               _platform_thread.kill_time(),
 			         _platform_thread.prio() };
 		}
     Trace::Source::Static_Info static_info() const

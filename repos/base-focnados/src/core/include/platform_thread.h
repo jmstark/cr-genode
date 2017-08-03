@@ -200,6 +200,8 @@ namespace Genode {
 
 			unsigned long long arrival_time() const;
 
+			unsigned long long kill_time() const;
+
 			unsigned prio() const;
 
 			unsigned id() const;

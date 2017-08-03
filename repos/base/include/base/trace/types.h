@@ -117,6 +117,7 @@ class Genode::Trace::CPU_info
 		Affinity::Location _affinity;
 		unsigned long long _start_time;
 		unsigned long long _arrival_time;
+		unsigned long long _kill_time;
 		unsigned	   _prio;
 		unsigned	   _id;
 		unsigned	   _foc_id;	
@@ -132,6 +133,7 @@ class Genode::Trace::CPU_info
 		             Affinity::Location affinity,
 			     unsigned long long start_time,
 			     unsigned long long arrival_time,
+			     unsigned long long kill_time,
 			     unsigned prio,
 			     unsigned id,
 			     unsigned foc_id,
@@ -139,7 +141,7 @@ class Genode::Trace::CPU_info
 				)
 		:
 			_state(state), _policy_id(policy_id),
-			_execution_time(execution_time), _affinity(affinity), _start_time(start_time), _arrival_time(arrival_time), _prio(prio), _id(id), _foc_id(foc_id), _pos_rq(pos_rq)
+			_execution_time(execution_time), _affinity(affinity), _start_time(start_time), _arrival_time(arrival_time), _kill_time(kill_time), _prio(prio), _id(id), _foc_id(foc_id), _pos_rq(pos_rq)
 		{ }
 
 		State                state()          const { return _state; }
@@ -148,6 +150,7 @@ class Genode::Trace::CPU_info
 		Affinity::Location   affinity()       const { return _affinity; }
 		unsigned long long   start_time()     const { return _start_time; }
 		unsigned long long   arrival_time()   const { return _arrival_time; }
+		unsigned long long   kill_time()      const { return _kill_time; }
 		unsigned	     prio()	      const { return _prio; }
 		unsigned	     id()	      const { return _id; }
 		unsigned	     foc_id()	      const { return _foc_id; }

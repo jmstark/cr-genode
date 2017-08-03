@@ -240,6 +240,7 @@ class Genode::Trace::Subject
 			Affinity::Location affinity;
 			unsigned long long start_time = 0;
 			unsigned long long arrival_time = 0;
+			unsigned long long kill_time = 0;
 			unsigned prio = 0;
 			unsigned id = 0;
 			unsigned foc_id = 0;
@@ -253,6 +254,7 @@ class Genode::Trace::Subject
 					affinity       = info.affinity;
 					start_time     = info.start_time;
 					arrival_time   = info.arrival_time;
+					kill_time      = info.kill_time;
 					prio=info.prio;
 					id=info.id;
 					foc_id=info.foc_id;
@@ -261,7 +263,7 @@ class Genode::Trace::Subject
 				}
 			}
 			CPU_info info= CPU_info(_state(), _policy_id,
-			                    execution_time, affinity, start_time, arrival_time, prio, id, foc_id, pos_rq
+			                    execution_time, affinity, start_time, arrival_time, kill_time, prio, id, foc_id, pos_rq
 						);
 			return info;
 		}
