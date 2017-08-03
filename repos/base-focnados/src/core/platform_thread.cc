@@ -399,6 +399,17 @@ void Platform_thread::deploy_queue(Genode::Dataspace_capability ds) const
 	}
 }
 
+void Platform_thread::killed()
+{
+	if (_utcb) {
+		//PDBG("%s\n",_name);
+		l4_thread_stats_time(_thread.local.data()->kcap());
+		_kill_time = l4_utcb_mr()->mr[4];
+		//PDBG("exe %lu start %lu kill %lu dead %lu\n",l4_utcb_mr()->mr[0]/1000,l4_utcb_mr()->mr[2]/1000, time/1000, l4_utcb_mr()->mr[3]/1000);
+	}
+	//PDBG("%s\n",_name);
+}
+
 Platform_thread::Platform_thread(size_t, const char *name, unsigned prio,
                                  Affinity::Location location, addr_t)
 : _state(DEAD),

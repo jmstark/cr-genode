@@ -55,6 +55,7 @@ namespace Genode {
 			long unsigned int  _id;
 			unsigned long long _start_time;
 			unsigned long long _arrival_time;
+			unsigned long long _kill_time;
 
 			Affinity::Location _location;
 
@@ -216,6 +217,8 @@ namespace Genode {
 			void dead(Genode::Dataspace_capability ds) const;
 
 			void deploy_queue(Genode::Dataspace_capability ds) const;
+
+			void killed();
 
 			/*******************************
 			 ** Fiasco-specific Accessors **

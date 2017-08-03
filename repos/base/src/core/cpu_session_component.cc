@@ -455,6 +455,17 @@ void Cpu_session_component::dead(Genode::Dataspace_capability ds)
 	thread->platform_thread().dead(ds);
 }
 
+void Cpu_session_component::killed()
+{
+	Cpu_thread_component * thread = _thread_list.first();
+	//get last thread, which is also main thread
+	while(thread->next())
+	{
+		thread=thread->next();
+	}
+	thread->platform_thread().killed();
+}
+
 
 size_t Cpu_session_component::_weight_to_quota(size_t const weight) const {
 	return (weight * _quota) / _weight; }
