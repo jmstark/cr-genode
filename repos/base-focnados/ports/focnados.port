@@ -2,5 +2,5 @@ LICENSE   	:= GPLv2
 VERSION   	:= git
 DOWNLOADS 	:= focnados.git
 URL(focnados)  	:= https://github.com/argos-research/foc.git
-REV(focnados)  	:= 6ac596f935105c29f17b0e8b2ebb775fe2d3aabf
+REV(focnados)  	:= a4c66c405cca826c332bc17135e9334879292202
 DIR(focnados)   := src/kernel/foc
