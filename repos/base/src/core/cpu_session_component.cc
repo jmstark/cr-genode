@@ -440,18 +440,36 @@ void Cpu_session_component::_update_each_thread_quota()
 void Cpu_session_component::deploy_queue(Genode::Dataspace_capability ds)
 {
 	Cpu_thread_component * thread = _thread_list.first();
+	//get last thread, which is also main thread
+	while(thread->next())
+	{
+		//PDBG("%s",thread->platform_thread()->name());
+		thread=thread->next();
+	}
 	thread->platform_thread().deploy_queue(ds);
 }
 
 void Cpu_session_component::rq(Genode::Dataspace_capability ds)
 {
 	Cpu_thread_component * thread = _thread_list.first();
+	//get last thread, which is also main thread
+	while(thread->next())
+	{
+		//PDBG("%s",thread->platform_thread()->name());
+		thread=thread->next();
+	}
 	thread->platform_thread().rq(ds);
 }
 
 void Cpu_session_component::dead(Genode::Dataspace_capability ds)
 {
 	Cpu_thread_component * thread = _thread_list.first();
+	//get last thread, which is also main thread
+	while(thread->next())
+	{
+		PDBG("%s",thread->platform_thread().name());
+		thread=thread->next();
+	}
 	thread->platform_thread().dead(ds);
 }
 
@@ -461,6 +479,7 @@ void Cpu_session_component::killed()
 	//get last thread, which is also main thread
 	while(thread->next())
 	{
+		PDBG("%s",thread->platform_thread().name());
 		thread=thread->next();
 	}
 	thread->platform_thread().killed();
