@@ -215,10 +215,10 @@ void Platform_thread::affinity(Affinity::Location location)
 	}
 
 	params.affinity = l4_sched_cpu_set(cpu, 0, 1);
-	l4_msgtag_t tag = l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP,
-	                                          _thread.local.dst(), &params);
-	if (l4_error(tag))
-		PWRN("setting affinity of %lx to %d failed!", _thread.local.dst(), cpu);
+	//l4_msgtag_t tag = l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP,
+	//                                          _thread.local.dst(), &params);
+	//if (l4_error(tag))
+	//	PWRN("setting affinity of %lx to %d failed!", _thread.local.dst(), cpu);
 }
 
 
@@ -379,7 +379,7 @@ unsigned Platform_thread::num_cores() const
 void Platform_thread::rq(Genode::Dataspace_capability ds) const
 {
 	int *list = Genode::env()->rm_session()->attach(ds);
-	l4_scheduler_get_rqs(L4_BASE_SCHEDULER_CAP);
+	l4_scheduler_get_rqs(list[1],L4_BASE_SCHEDULER_CAP);
 	list[0]=(int)l4_utcb_mr()->mr[0];
 	for(int i=1; i<=2*((int)l4_utcb_mr()->mr[0]);i++)
 	{
@@ -429,7 +429,7 @@ Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadl
 {
 	((Core_cap_index*)_thread.local.idx())->pt(this);
 	_create_thread();
-	affinity(location);
+	//affinity(location);
 	_finalize_construction(name);
 }
 
