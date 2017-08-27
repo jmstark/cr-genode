@@ -53,6 +53,7 @@ usage:
 	@echo "                  'focnados_panda'"
 	@echo "                  'focnados_rpi'"
 	@echo "                  'focnados_odroid_u3'"
+	@echo "                  'focnados_zybo'"
 	@echo "                  'sel4_x86_32'"
 	@echo
 	@echo "  The definition of BUILD_DIR is optional. If specified,"
@@ -149,7 +150,7 @@ $(BUILD_DIR)/Makefile:
 #
 # Add 'ports-foc' repository to Fiasco.OC build directory
 #
-ifeq ($(filter-out focnados_x86_32 foc_x86_32 foc_imx53 focnados_pbxa9 foc_pbxa9 focnados_panda foc_panda foc_arndale focnados_rpi foc_rpi focnados_odroid_u3 foc_odroid_x2,$(PLATFORM)),)
+ifeq ($(filter-out focnados_x86_32 foc_x86_32 foc_imx53 focnados_pbxa9 foc_pbxa9 focnados_panda foc_panda foc_arndale focnados_rpi foc_rpi focnados_odroid_u3 foc_odroid_x2 focnados_zybo,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).ports-foc >> $@
 endif
@@ -165,7 +166,7 @@ endif
 #
 # Add ARM drivers repositories to ARM build directories
 #
-ifeq ($(filter-out focnados_panda foc_panda foc_arndale hw_panda hw_arndale hw_odroid_xu foc_imx53 focnados_rpi foc_rpi focnados_odroid_u3 foc_odroid_x2,$(PLATFORM)),)
+ifeq ($(filter-out focnados_panda foc_panda foc_arndale hw_panda hw_arndale hw_odroid_xu foc_imx53 focnados_rpi foc_rpi focnados_odroid_u3 foc_odroid_x2 focnados_zybo,$(PLATFORM)),)
 $(BUILD_DIR)/etc/build.conf::
 	@cat $(BUILD_CONF).drivers_arm >> $@
 endif
@@ -237,6 +238,9 @@ focnados_odroid_u3::
 
 foc_odroid_x2::
 	@echo "SPECS = genode foc_odroid_x2" > $(BUILD_DIR)/etc/specs.conf
+
+focnados_zybo::
+	@echo "SPECS = genode focnados_zybo" > $(BUILD_DIR)/etc/specs.conf
 
 #
 # On all other platforms, the performance counter is assumed to be active by
