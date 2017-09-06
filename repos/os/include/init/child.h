@@ -481,7 +481,7 @@ class Init::Child : Genode::Child_policy
 				pd(label),
 				ram(label),
 				cpu(label,
-				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2),
+				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2),0,
 				    affinity)
 			{
 				/* deduce session costs from usable ram quota */
@@ -497,6 +497,7 @@ class Init::Child : Genode::Child_policy
 				Genode::env()->ram_session()->transfer_quota(ram.cap(), ram_quota);
 
 				transfer_cpu_quota();
+				PINF("ram_quota=%d",ram_quota);
 			}
 		} _resources;
 
@@ -858,3 +859,4 @@ void Init::Child::Resources::transfer_cpu_quota()
 }
 
 #endif /* _INCLUDE__INIT__CHILD_H_ */
+

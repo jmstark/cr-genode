@@ -50,76 +50,13 @@ int Cpu_session_component::get_sched_type(unsigned core){
 	return _sched_type[core];
 }
 
-Thread_capability Cpu_session_component::create_fp_edf_thread(Capability<Pd_session> pd_cap,
-															Name const &name,
-															Affinity::Location affinity,
-															Weight weight,
-															addr_t utcb,
-															unsigned priority,
-															unsigned deadline)
+Thread_capability Cpu_session_component::create_thread(Capability<Pd_session> pd_cap,
+							Name const &name,
+							Affinity::Location affinity,
+							Weight weight,
+							addr_t utcb)
 {
   Trace::Thread_name thread_name(name.string());
-
-	Cpu_thread_component *thread = 0;
-
-	if (_sched_type[affinity.xpos()] == FIXED_PRIO && priority == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", affinity.xpos());
-		throw Cpu_session::Thread_creation_failed();
-	}
-	if(_sched_type[affinity.xpos()] == DEADLINE && deadline == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected EDF", affinity.xpos());
-		throw Cpu_session::Thread_creation_failed();
-	}
-
-	if (weight.value == 0) {
-		warning("Thread ", name, ": Bad weight 0, using default weight instead.");
-		weight = Weight();
-	}
-	if (weight.value > QUOTA_LIMIT) {
-		warning("Thread ", name, ": Oversized weight ", weight.value, ", using limit instead.");
-		weight = Weight(QUOTA_LIMIT);
-	}
-
-	Lock::Guard thread_list_lock_guard(_thread_list_lock);
-	_incr_weight(weight.value);
-
-	/*
-	 * Create thread associated with its protection domain
-	 */
-	auto create_thread_lambda = [&] (Pd_session_component *pd) {
-		if (!pd) {
-			error("create_thread: invalid PD argument");
-			throw Thread_creation_failed();
-		}
-		Lock::Guard slab_lock_guard(_thread_alloc_lock);
-		thread = new (&_thread_alloc)
-			Cpu_thread_component(
-				cap(), *_thread_ep, *_pager_ep, *pd, _trace_control_area,
-				_trace_sources, weight, _weight_to_quota(weight.value),
-				deadline, _thread_affinity(affinity), _label, thread_name,
-				priority, utcb);
-	};
-
-	try { _thread_ep->apply(pd_cap, create_thread_lambda); }
-	catch (Region_map::Out_of_metadata) { throw Out_of_metadata(); }
-	catch (Allocator::Out_of_memory)    { throw Out_of_metadata(); }
-
-	thread->session_exception_sigh(_exception_sigh);
-
-	_thread_list.insert(thread);
-
-	return thread->cap();
-}
-
-
-
-Thread_capability Cpu_session_component::create_thread(Capability<Pd_session> pd_cap,
-                                                       Name const &name,
-                                                       Affinity::Location affinity,
-                                                       Weight weight,
-                                                       addr_t utcb)
-{
-	Trace::Thread_name thread_name(name.string());
 
 	Cpu_thread_component *thread = 0;
 
@@ -149,7 +86,7 @@ Thread_capability Cpu_session_component::create_thread(Capability<Pd_session> pd
 				cap(), *_thread_ep, *_pager_ep, *pd, _trace_control_area,
 				_trace_sources, weight, _weight_to_quota(weight.value),
 				_thread_affinity(affinity), _label, thread_name,
-				_priority, utcb);
+				_priority, _deadline, utcb);
 	};
 
 	try { _thread_ep->apply(pd_cap, create_thread_lambda); }
@@ -162,7 +99,6 @@ Thread_capability Cpu_session_component::create_thread(Capability<Pd_session> pd
 
 	return thread->cap();
 }
-
 
 Affinity::Location Cpu_session_component::_thread_affinity(Affinity::Location location) const
 {
@@ -330,7 +266,7 @@ Cpu_session_component::Cpu_session_component(Rpc_entrypoint         *session_ep,
 	_session_ep(session_ep),
 	_thread_ep(thread_ep), _pager_ep(pager_ep),
 	_md_alloc(md_alloc, remaining_session_ram_quota(args)),
-	_thread_alloc(&_md_alloc), _priority(0),
+	_thread_alloc(&_md_alloc), _priority(0), _deadline(0),
 
 	/* map affinity to a location within the physical affinity space */
 	_location(affinity.scale_to(platform()->affinity_space())),
@@ -344,6 +280,11 @@ Cpu_session_component::Cpu_session_component(Rpc_entrypoint         *session_ep,
 
 		/* clamp priority value to valid range */
 		_priority = min((unsigned)PRIORITY_LIMIT - 1, _priority);
+	}
+
+	a = Arg_string::find_arg(args, "deadline");
+	if (a.valid()) {
+		_deadline = a.ulong_value(0);
 	}
 	/*Create Array with number_of_core Elements for storing scheduling strategy*/
 	_sched_type = new (Genode::env()->heap()) long[platform()->affinity_space().total()];

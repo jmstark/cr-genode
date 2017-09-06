@@ -29,12 +29,12 @@ struct Genode::Cpu_connection : Connection<Cpu_session>, Cpu_session_client
 	 *
 	 * \noapi
 	 */
-	Capability<Cpu_session> _session(Parent &parent, char const *label,
-	                                 long priority, Affinity const &affinity)
+	Capability<Cpu_session> _session(Parent &parent, char const *label, Affinity const &affinity,
+	                                 long priority, unsigned deadline)
 	{
 		return session(parent, affinity,
-		               "priority=0x%lx, ram_quota=128K, label=\"%s\"",
-		               priority, label);
+		               "priority=0x%lx, deadline=%d, ram_quota=%u, label=\"%s\"",
+		               priority, deadline, RAM_QUOTA, label);
 	}
 
 	/**
@@ -44,10 +44,11 @@ struct Genode::Cpu_connection : Connection<Cpu_session>, Cpu_session_client
 	 * \param priority  designated priority of all threads created
 	 *                  with this CPU session
 	 */
-	Cpu_connection(Env &env, const char *label = "", long priority = DEFAULT_PRIORITY,
+
+	Cpu_connection(Env &env, const char *label = "", long priority = DEFAULT_PRIORITY, unsigned deadline=0,
 	               Affinity const &affinity = Affinity())
 	:
-		Connection<Cpu_session>(env, _session(env.parent(), label, priority, affinity)),
+		Connection<Cpu_session>(env, _session(env.parent(), label, affinity, priority, deadline)),
 		Cpu_session_client(cap())
 	{ }
 
@@ -58,25 +59,13 @@ struct Genode::Cpu_connection : Connection<Cpu_session>, Cpu_session_client
 	 * \deprecated  Use the constructor with 'Env &' as first
 	 *              argument instead
 	 */
-	Cpu_connection(const char *label = "", long priority = DEFAULT_PRIORITY,
+	Cpu_connection(const char *label = "", long priority = DEFAULT_PRIORITY, unsigned deadline=0,
 	               Affinity const &affinity = Affinity())
 	:
-		Connection<Cpu_session>(_session(*env()->parent(), label, priority, affinity)),
+		Connection<Cpu_session>(_session(*env()->parent(), label, affinity, priority, deadline)),
 		Cpu_session_client(cap())
 	{ }
 
-
-	/*
-		Cpu_connection_fp_edf(char     const *label    = "",
-					   long            priority = DEFAULT_PRIORITY,
-					   long			   deadline = 0,
-					   Affinity const &affinity = Affinity())
-		:
-			Connection<Cpu_session>(
-				session(affinity, "priority=0x%lx, ram_quota=%u, label=\"%s\"",
-						priority, RAM_QUOTA, label)),
-			Cpu_session_client(cap()) { }
-	*/
 };
 
 #endif /* _INCLUDE__CPU_SESSION__CONNECTION_H_ */

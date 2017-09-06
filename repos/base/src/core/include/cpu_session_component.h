@@ -52,6 +52,7 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		unsigned                   _priority;          /* priority of threads
 		                                                  created with this
 		                                                  session */
+		unsigned                   _deadline;
 		Affinity::Location         _location;          /* CPU affinity of this
 		                                                  session */
 		Trace::Source_registry    &_trace_sources;
@@ -168,9 +169,6 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		int get_sched_type(unsigned core);
 		Thread_capability create_thread(Capability<Pd_session>, Name const &,
 		                                Affinity::Location, Weight, addr_t) override;
-		Thread_capability create_fp_edf_thread(Capability<Pd_session>, Name const &,
-		                                Affinity::Location, Weight, addr_t,
-		                                unsigned, unsigned) override;
 		void kill_thread(Thread_capability) override;
 		void exception_sigh(Signal_context_capability) override;
 		Affinity::Space affinity_space() const override;
@@ -182,7 +180,7 @@ class Genode::Cpu_session_component : public Rpc_object<Cpu_session>,
 		void deploy_queue(Genode::Dataspace_capability ds);
 		void rq(Genode::Dataspace_capability ds);
 		void dead(Genode::Dataspace_capability ds);
-    void killed();
+    		void killed();
 		Capability<Native_cpu> native_cpu() override { return _native_cpu.cap(); }
 };
 

@@ -78,8 +78,8 @@ namespace Genode {
 			/**
 			 * Constructor for fp-edf non-core threads
 			 */
-			Platform_thread(size_t, const char *name, unsigned priority, unsigned deadline,
-			                Affinity::Location, addr_t);
+
+			Platform_thread(size_t, const char *name, unsigned priority, unsigned deadline, Affinity::Location location, addr_t);
 
 			/**
 			 * Constructor for core main-thread
