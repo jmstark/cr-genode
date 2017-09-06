@@ -29,11 +29,6 @@ struct Genode::Cpu_session_client : Rpc_client<Cpu_session>
 	create_thread(size_t quota, Name const &name, addr_t utcb = 0) override {
 		return call<Rpc_create_thread>(quota, name, utcb); }
 
-	Thread_capability
-	create_fp_edf_thread(size_t quota, Name const &name, addr_t utcb = 0,
-				unsigned priority = 0, unsigned deadline = 0, unsigned cpu = 0) override {
-		return call<Rpc_create_fp_edf_thread>(quota, name, utcb, priority, deadline, cpu); }
-
 	int set_sched_type(unsigned core = 0, unsigned sched_type = 0){
 		return call<Rpc_set_sched_type>(core, sched_type); }
 

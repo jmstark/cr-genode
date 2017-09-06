@@ -31,6 +31,7 @@ struct Genode::Cpu_connection : Connection<Cpu_session>, Cpu_session_client
 	 * \param priority  designated priority of all threads created
 	 *                  with this CPU session
 	 */
+/*	
 	Cpu_connection(char     const *label    = "",
 	               long            priority = DEFAULT_PRIORITY,
 	               Affinity const &affinity = Affinity())
@@ -39,19 +40,19 @@ struct Genode::Cpu_connection : Connection<Cpu_session>, Cpu_session_client
 			session(affinity, "priority=0x%lx, ram_quota=%u, label=\"%s\"",
 			        priority, RAM_QUOTA, label)),
 		Cpu_session_client(cap()) { }
+*/
 
 
-/*
-	Cpu_connection_fp_edf(char     const *label    = "",
+	Cpu_connection(char     const *label    = "",
 				   long            priority = DEFAULT_PRIORITY,
 				   long			   deadline = 0,
 				   Affinity const &affinity = Affinity())
 	:
 		Connection<Cpu_session>(
-			session(affinity, "priority=0x%lx, ram_quota=%u, label=\"%s\"",
-					priority, RAM_QUOTA, label)),
+			session(affinity, "priority=0x%lx, deadline=%d, ram_quota=%u, label=\"%s\"",
+					priority, deadline, RAM_QUOTA, label)),
 		Cpu_session_client(cap()) { }
-*/
+
 };
 
 #endif /* _INCLUDE__CPU_SESSION__CONNECTION_H_ */

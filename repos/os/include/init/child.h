@@ -493,7 +493,7 @@ class Init::Child : Genode::Child_policy
 				pd(label, pd_args),
 				ram(label),
 				cpu(label,
-				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2),
+				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2), 0,
 				    affinity)
 			{
 				/* deduce session costs from usable ram quota */

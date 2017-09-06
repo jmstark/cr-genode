@@ -178,6 +178,7 @@ namespace Genode {
 			unsigned                   _priority;          /* priority of threads
 			                                                  created with this
 			                                                  session */
+			unsigned		   _deadline;
 			Affinity::Location         _location;          /* CPU affinity of this 
 			                                                  session */
 			Trace::Source_registry    &_trace_sources;

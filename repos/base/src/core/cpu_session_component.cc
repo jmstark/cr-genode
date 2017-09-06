@@ -57,74 +57,6 @@ int Cpu_session_component::get_sched_type(unsigned core){
 	return _sched_type[core];
 }
 
-Thread_capability Cpu_session_component::create_fp_edf_thread(size_t weight,
-															Name const &name,
-															addr_t utcb,
-															unsigned priority,
-															unsigned deadline,
-															unsigned cpu)
-{
-
-	unsigned trace_control_index = 0;
-	if (!_trace_control_area.alloc(trace_control_index))
-		throw Out_of_metadata();
-
-	Trace::Control * const trace_control =
-		_trace_control_area.at(trace_control_index);
-
-	Trace::Thread_name thread_name(name.string());
-
-	Cpu_thread_component *thread = 0;
-
-	if (_sched_type[cpu] == FIXED_PRIO && priority == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected Fixed Priority", cpu);
-		throw Cpu_session::Thread_creation_failed();
-	}
-	if(_sched_type[cpu] == DEADLINE && deadline == 0){
-		PERR("Wrong Scheduling Type on CPU %d, expected EDF", cpu);
-		throw Cpu_session::Thread_creation_failed();
-	}
-
-
-	if (weight == 0) {
-		PWRN("Thread %s: Bad weight 0, using %i instead.",
-		     name.string(), DEFAULT_WEIGHT);
-		weight = DEFAULT_WEIGHT;
-	}
-	if (weight > QUOTA_LIMIT) {
-		PWRN("Thread %s: Oversized weight %zu, using %i instead.",
-		     name.string(), weight, QUOTA_LIMIT);
-		weight = QUOTA_LIMIT;
-	}
-	Lock::Guard thread_list_lock_guard(_thread_list_lock);
-	_incr_weight(weight);
-
-	Affinity::Location location(cpu, 0);
-
-	try {
-		Lock::Guard slab_lock_guard(_thread_alloc_lock);
-		thread = new(&_thread_alloc)
-			Cpu_thread_component(
-				weight, _weight_to_quota(weight), _label, thread_name,
-				priority, deadline, utcb, _default_exception_handler,
-				trace_control_index, *trace_control, location);
-
-		/* set default affinity defined by CPU session */
-		thread->platform_thread()->affinity(location);
-	} catch (Allocator::Out_of_memory) {
-		throw Out_of_metadata();
-	}
-
-	_thread_list.insert(thread);
-
-	_trace_sources.insert(thread->trace_source());
-
-	return _thread_ep->manage(thread);
-
-}
-
-
-
 Thread_capability Cpu_session_component::create_thread(size_t weight,
                                                        Name const &name,
                                                        addr_t utcb)
@@ -158,7 +90,7 @@ Thread_capability Cpu_session_component::create_thread(size_t weight,
 		thread = new(&_thread_alloc)
 			Cpu_thread_component(
 				weight, _weight_to_quota(weight), _label, thread_name,
-				_priority, utcb, _default_exception_handler,
+				_priority, _deadline ,utcb, _default_exception_handler,
 				trace_control_index, *trace_control);
 
 		/* set default affinity defined by CPU session */
@@ -504,7 +436,7 @@ Cpu_session_component::Cpu_session_component(Rpc_entrypoint         *session_ep,
 	_session_ep(session_ep),
 	_thread_ep(thread_ep), _pager_ep(pager_ep),
 	_md_alloc(md_alloc, remaining_session_ram_quota(args)),
-	_thread_alloc(&_md_alloc), _priority(0),
+	_thread_alloc(&_md_alloc), _priority(0), _deadline(0),
 
 	/* map affinity to a location within the physical affinity space */
 	_location(affinity.scale_to(platform()->affinity_space())),
@@ -522,6 +454,11 @@ Cpu_session_component::Cpu_session_component(Rpc_entrypoint         *session_ep,
 
 		/* clamp priority value to valid range */
 		_priority = min((unsigned)PRIORITY_LIMIT - 1, _priority);
+	}
+
+	a = Arg_string::find_arg(args, "deadline");
+	if (a.valid()) {
+		_deadline = a.ulong_value(0);
 	}
 	/*Create Array with number_of_core Elements for storing scheduling strategy*/
 	_sched_type = new (Genode::env()->heap()) long[platform()->affinity_space().total()];

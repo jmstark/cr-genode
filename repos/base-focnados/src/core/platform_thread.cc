@@ -263,13 +263,17 @@ void Platform_thread::_finalize_construction(const char *name)
 	Fiasco::l4_debugger_set_object_name(_thread.local.dst(), name);
 
 	l4_sched_param_t params;
-	/* set priority of thread */
-	if (_dl<=0)
-		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
-	else if(_prio<=0)
+	/* set priority of thread */	
+
+	if (_dl>0)
+	{
+		_prio=0;
 		params = l4_sched_param_by_type(Deadline, _dl, 0);
+	}
+	else if(_prio>0)
+		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
 	else{
-		PWRN("wrong scheduling type");
+		PWRN("wrong scheduling type prio:%d deadline:%d", _prio, _dl);
 		return;
 	}
 
@@ -416,7 +420,7 @@ void Platform_thread::killed()
 	}
 }
 
-Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadline, Affinity::Location location, addr_t)
+Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadline, addr_t)
 : _state(DEAD),
   _core_thread(false),
   _thread(true),
@@ -427,6 +431,7 @@ Platform_thread::Platform_thread(const char *name, unsigned prio, unsigned deadl
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
   _dl(deadline)
 {
+	PDBG("create thread with deadline");
 	((Core_cap_index*)_thread.local.idx())->pt(this);
 	_create_thread();
 	//affinity(location);
