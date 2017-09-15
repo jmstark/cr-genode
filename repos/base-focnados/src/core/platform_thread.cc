@@ -15,6 +15,7 @@
 #include <base/ipc.h>
 #include <base/log.h>
 #include <util/string.h>
+#include <timer_session/connection.h>
 
 /* core includes */
 #include <platform_thread.h>
@@ -215,20 +216,23 @@ void Platform_thread::affinity(Affinity::Location location)
 
 	l4_sched_param_t params;
 	/* set priority of thread */
-	if (_dl<=0)
-		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
-	else if(_prio<=0)
+	if (_dl>0)
+	{
+		_prio=0;
 		params = l4_sched_param_by_type(Deadline, _dl, 0);
+	}
+	else if(_prio>0)
+		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
 	else{
 		PWRN("wrong scheduling type");
 		return;
 	}
 
 	params.affinity = l4_sched_cpu_set(cpu, 0, 1);
-	//l4_msgtag_t tag = l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP,
-	//                                          _thread.local.data()->kcap(), &params);
-	//if (l4_error(tag))
-	//	PWRN("setting affinity of %lx to %d failed!", _thread.local.data()->kcap(), cpu);
+	l4_msgtag_t tag = l4_scheduler_run_thread(L4_BASE_SCHEDULER_CAP,
+	                                          _thread.local.data()->kcap(), &params);
+	if (l4_error(tag))
+		PWRN("setting affinity of %lx to %d failed!", _thread.local.data()->kcap(), cpu);
 }
 
 
@@ -259,6 +263,7 @@ void Platform_thread::_create_thread()
 
 void Platform_thread::_finalize_construction(const char *name)
 {
+	PDBG("finalize construction");
 	/* create irq for new thread */
 	l4_msgtag_t tag = l4_factory_create_irq(L4_BASE_FACTORY_CAP,
 	                                        _irq.local.data()->kcap());
