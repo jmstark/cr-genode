@@ -79,6 +79,15 @@ namespace Init {
 		return priority;
 	}
 
+	inline long read_deadline(Genode::Xml_node start_node)
+	{
+		long deadline = 0;
+		try { start_node.attribute("deadline").value(&deadline); }
+		catch (...) { }
+
+		return deadline;
+	}
+
 
 	inline Genode::Affinity::Location
 	read_affinity_location(Genode::Affinity::Space const &space,
@@ -493,7 +502,7 @@ class Init::Child : Genode::Child_policy
 				pd(label, pd_args),
 				ram(label),
 				cpu(label,
-				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2), 0,
+				    priority*(Genode::Cpu_session::PRIORITY_LIMIT >> prio_levels_log2), read_deadline(start_node),
 				    affinity)
 			{
 				/* deduce session costs from usable ram quota */
