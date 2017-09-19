@@ -251,7 +251,6 @@ void Platform_thread::_create_thread()
 
 void Platform_thread::_finalize_construction(const char *name)
 {
-	PDBG("finalize construction");
 	/* create irq for new thread */
 	l4_msgtag_t tag = l4_factory_create_irq(L4_BASE_FACTORY_CAP,
 	                                        _irq.local.dst());
