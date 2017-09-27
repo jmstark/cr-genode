@@ -263,7 +263,6 @@ void Platform_thread::_create_thread()
 
 void Platform_thread::_finalize_construction(const char *name)
 {
-	PDBG("finalize construction");
 	/* create irq for new thread */
 	l4_msgtag_t tag = l4_factory_create_irq(L4_BASE_FACTORY_CAP,
 	                                        _irq.local.data()->kcap());
@@ -451,7 +450,6 @@ Platform_thread::Platform_thread(size_t, const char *name, unsigned prio, unsign
   _prio(Cpu_session::scale_priority(DEFAULT_PRIORITY, prio)),
   _dl(deadline)
 {
-	PDBG("create thread with deadline");
 	((Core_cap_index*)_thread.local.data())->pt(this);
 	_create_thread();
 	//affinity(location);
