@@ -233,7 +233,7 @@ focnados_rpi::
 	@echo "SPECS = genode focnados_rpi" > $(BUILD_DIR)/etc/specs.conf
 
 focnados_odroid_u3::
-	@echo "SPECS = genode foc_odroid_u3" > $(BUILD_DIR)/etc/specs.conf
+	@echo "SPECS = genode focnados_odroid_u3" > $(BUILD_DIR)/etc/specs.conf
 
 foc_odroid_x2::
 	@echo "SPECS = genode foc_odroid_x2" > $(BUILD_DIR)/etc/specs.conf
