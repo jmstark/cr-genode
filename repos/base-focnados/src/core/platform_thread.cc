@@ -287,7 +287,9 @@ void Platform_thread::_finalize_construction(const char *name)
 		params = l4_sched_param_by_type(Deadline, _dl, 0);
 	}
 	else if(_prio>0)
+	{
 		params = l4_sched_param_by_type(Fixed_prio, _prio, 0);
+	}
 	else{
 		PWRN("wrong scheduling type prio:%d deadline:%d", _prio, _dl);
 		return;
@@ -358,7 +360,7 @@ unsigned long long Platform_thread::idle(unsigned num) const
 {
 	unsigned long long time = 0;
 
-	l4_sched_cpu_set_t cpus = l4_sched_cpu_set(0, 0, num+1);
+	l4_sched_cpu_set_t cpus = l4_sched_cpu_set(num, 0, 1);
 
 	if (_utcb) {
 		l4_scheduler_idle_time(L4_BASE_SCHEDULER_CAP, &cpus);
