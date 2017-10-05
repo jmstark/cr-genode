@@ -385,7 +385,7 @@ unsigned Platform_thread::num_cores() const
 void Platform_thread::rq(Genode::Dataspace_capability ds) const
 {
 	int *list = Genode::env()->rm_session()->attach(ds);
-	l4_scheduler_get_rqs(list[1],L4_BASE_SCHEDULER_CAP);
+	l4_scheduler_get_rqs(list[1],list[2],L4_BASE_SCHEDULER_CAP);
 	list[0]=(int)l4_utcb_mr()->mr[0];
 	for(int i=1; i<=2*((int)l4_utcb_mr()->mr[0]);i++)
 	{
