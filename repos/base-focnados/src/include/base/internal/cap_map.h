@@ -31,7 +31,7 @@
 #include <base/exception.h>
 #include <base/stdint.h>
 #include <base/lock_guard.h>
-#include <util/avl_tree.h>
+#include <util/list.h>
 #include <util/noncopyable.h>
 #include <util/string.h>
 
@@ -169,7 +169,8 @@ namespace Genode {
 	{
 		private:
 
-			Avl_tree<Cap_index> _tree;
+			// Modification for Checkpoint/Restore (rtcr): Changed AVL to List
+			List<Cap_index>     _tree;
 			Spin_lock           _lock;
 
 		public:
