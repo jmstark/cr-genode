@@ -50,7 +50,7 @@ proc run_power_on { } {
 		append qemu_args " -M realview-pbx-a9"
 	}
 	if {[have_spec vpb926]} { append qemu_args " -M versatilepb     -m 128 " }
-	if {[have_spec zynq_qemu]}   { append qemu_args " -M xilinx-zynq-a9 -cpu cortex-a9 -m 256 " }
+	if {[have_spec zynq_qemu]}   { append qemu_args " -M xilinx-zynq-a9 -cpu cortex-a9 -m 512 " }
 
 	# add devices for specific platforms
 	if {[have_spec zynq] && [have_spec cadence_gem]} { append qemu_args " -net nic,model=cadence_gem" }
