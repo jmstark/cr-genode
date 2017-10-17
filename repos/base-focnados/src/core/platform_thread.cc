@@ -535,8 +535,8 @@ Platform_thread::Platform_thread(size_t, const char *name, unsigned prio, unsign
 {
 	((Core_cap_index*)_thread.local.data())->pt(this);
 	_create_thread();
-	//affinity(location);
 	_finalize_construction(name);
+	affinity(location);
 }
 
 
