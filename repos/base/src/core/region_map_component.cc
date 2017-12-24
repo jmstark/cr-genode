@@ -614,6 +614,31 @@ Region_map::State Region_map_component::state()
 }
 
 
+void Region_map_component::processed(State state)
+{
+	PINF("%s:%d: processed()", __FILE__, __LINE__);
+	/* Serialize access */
+	Lock::Guard lock_guard(_lock);
+
+	/* Check if processed operation concerns any of our faulters */
+	for (Rm_faulter *faulter = _faulters.head(); faulter; )
+	{
+		/* Remember next faulter before possibly removing the current one */
+		Rm_faulter *next = faulter->next();
+
+		/* Reactivate faulter */
+		//if (faulter->fault_state().imprint == state.imprint) {
+			_faulters.remove(faulter);
+			//faulter->continue_after_processed_fault();
+			faulter->continue_after_resolved_fault();
+		//}
+		/* Get next faulter */
+		faulter = next;
+	}
+}
+
+
+
 static Dataspace_capability
 _type_deduction_helper(Dataspace_capability cap) { return cap; }
 

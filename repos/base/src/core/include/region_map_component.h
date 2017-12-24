@@ -408,6 +408,7 @@ class Genode::Region_map_component : public Rpc_object<Region_map>,
 		void             detach        (Local_addr) override;
 		void             fault_handler (Signal_context_capability handler) override;
 		State            state         () override;
+		void             processed     (State state) override;
 
 		Dataspace_capability dataspace () override { return _ds_cap; }
 };

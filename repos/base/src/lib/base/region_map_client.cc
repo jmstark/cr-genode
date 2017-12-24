@@ -41,4 +41,8 @@ void Region_map_client::fault_handler(Signal_context_capability cap) {
 Region_map::State Region_map_client::state() { return call<Rpc_state>(); }
 
 
+void Region_map_client::processed(State state) {
+	call<Rpc_processed>(state); }
+
+
 Dataspace_capability Region_map_client::dataspace() { return call<Rpc_dataspace>(); }

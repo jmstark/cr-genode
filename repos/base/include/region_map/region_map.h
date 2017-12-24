@@ -19,6 +19,7 @@
 #include <base/signal.h>
 #include <dataspace/capability.h>
 #include <thread/capability.h>
+#include <base/printf.h>
 
 namespace Genode { struct Region_map; }
 
@@ -157,6 +158,18 @@ struct Genode::Region_map
 	virtual State state() = 0;
 
 	/**
+	 * Finish fault, assuming that the faulting instr. has been emulated
+	 *
+	 * \param  state  Fault attributes and emulation results that are
+	 *                needed to identify and continue the faulter.
+	 */
+	virtual void processed(State state)
+	{
+		PERR("%s:%d: Not implemented", __FILE__, __LINE__);
+		while(1);
+	};
+
+	/**
 	 * Return dataspace representation of region map
 	 */
 	virtual Dataspace_capability dataspace() = 0;
@@ -173,10 +186,11 @@ struct Genode::Region_map
 	GENODE_RPC(Rpc_detach, void, detach, Local_addr);
 	GENODE_RPC(Rpc_fault_handler, void, fault_handler, Signal_context_capability);
 	GENODE_RPC(Rpc_state, State, state);
+	GENODE_RPC(Rpc_processed, void, processed, State);
 	GENODE_RPC(Rpc_dataspace, Dataspace_capability, dataspace);
 
 	GENODE_RPC_INTERFACE(Rpc_attach, Rpc_detach, Rpc_fault_handler, Rpc_state,
-	                     Rpc_dataspace);
+	                     Rpc_processed, Rpc_dataspace);
 };
 
 #endif /* _INCLUDE__REGION_MAP__REGION_MAP_H_ */
