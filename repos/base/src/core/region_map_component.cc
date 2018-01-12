@@ -265,6 +265,9 @@ void Rm_faulter::fault(Region_map_component *faulting_region_map,
 	_faulting_region_map = faulting_region_map;
 	_fault_state         = fault_state;
 
+	/* sign fault state to enable the RM session client to identify us */
+	_fault_state.imprint = _imprint;
+
 	_pager_object->unresolved_page_fault_occurred();
 }
 
@@ -288,6 +291,21 @@ void Rm_faulter::continue_after_resolved_fault()
 	_pager_object->wake_up();
 	_faulting_region_map = 0;
 	_fault_state = Region_map::State();
+}
+
+void Rm_faulter::increase_ip()
+{
+	Lock::Guard lock_guard(_lock);
+
+//	_pager_object->wake_up();
+	//_pager_object->state.ip += 32;
+//TODO: increase IP
+//	Cpu_session* cli = _faulting_region_map->clients()->first()->cpu_session_cap();
+
+//	cli+=0;
+//	PINF("IP = %lu", (cli->state.ip));
+//	_faulting_region_map = 0;
+//	_fault_state = Region_map::State();
 }
 
 
@@ -571,7 +589,8 @@ void Region_map_component::fault(Rm_faulter *faulter, addr_t pf_addr,
                                  Region_map::State::Fault_type pf_type)
 {
 	/* remember fault state in faulting thread */
-	faulter->fault(this, Region_map::State(pf_type, pf_addr));
+	//TODO
+	faulter->fault(this, Region_map::State(pf_type, pf_addr,0,0,0));
 
 	/* enqueue faulter */
 	_faulters.enqueue(faulter);
@@ -628,8 +647,11 @@ void Region_map_component::processed(State state)
 
 		/* Reactivate faulter */
 		//if (faulter->fault_state().imprint == state.imprint) {
+		//TODO: increase IP properly
+		faulter->increase_ip();
 			_faulters.remove(faulter);
 			//faulter->continue_after_processed_fault();
+
 			faulter->continue_after_resolved_fault();
 		//}
 		/* Get next faulter */

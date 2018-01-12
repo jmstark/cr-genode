@@ -26,6 +26,9 @@ namespace Genode { struct Region_map; }
 
 struct Genode::Region_map
 {
+
+	enum Access_format { LSB8, LSB16, LSB32 };
+
 	/**
 	 * State of region map
 	 *
@@ -50,15 +53,48 @@ struct Genode::Region_map
 		addr_t addr = 0;
 
 		/**
+		 * Format of memoryaccess
+		 */
+		Access_format format;
+
+		/**
+		 * Might be used by a pager to identify a faulter
+		 */
+		unsigned imprint;
+
+		/**
+		 * Value wich is requested to be written, or in return read
+		 */
+		unsigned value;
+
+		/**
+		 * Faulting instruction pointer within the 'core' space
+		 */
+		unsigned * instr;
+
+		/**
 		 * Default constructor
 		 */
-		State() { }
+		State() : addr(0), value(0) { }
 
 		/**
 		 * Constructor
 		 */
 		State(Fault_type fault_type, addr_t fault_addr)
 		: type(fault_type), addr(fault_addr) { }
+
+		/**
+		 * Constructor
+		 */
+		State(Fault_type fault_type, addr_t fault_addr,
+		      unsigned const imprint = 0,
+		      unsigned const fault_value = 0,
+		      unsigned * const fault_instr = 0)
+		:
+			type(fault_type), addr(fault_addr), value(fault_value),
+			instr(fault_instr)
+		{ }
+
 	};
 
 

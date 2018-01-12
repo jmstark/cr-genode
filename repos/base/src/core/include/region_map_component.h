@@ -117,6 +117,7 @@ class Genode::Rm_faulter : public Fifo<Rm_faulter>::Element
 		Lock                  _lock;
 		Region_map_component *_faulting_region_map;
 		Region_map::State     _fault_state;
+		unsigned			  _imprint;
 
 	public:
 
@@ -127,8 +128,10 @@ class Genode::Rm_faulter : public Fifo<Rm_faulter>::Element
 		 *
 		 * Currently, there is only one pager in core.
 		 */
-		Rm_faulter(Pager_object *pager_object) :
-			_pager_object(pager_object), _faulting_region_map(0) { }
+		Rm_faulter(Pager_object *pager_object, unsigned imprint) :
+			_pager_object(pager_object), _faulting_region_map(0),
+			_imprint(imprint)
+		{ }
 
 		/**
 		 * Assign fault state
@@ -159,6 +162,11 @@ class Genode::Rm_faulter : public Fifo<Rm_faulter>::Element
 		 * Wake up faulter by answering the pending page fault
 		 */
 		void continue_after_resolved_fault();
+
+		/**
+		 * Increase instruction pointer by 1 instruction
+		 */
+		void increase_ip();
 };
 
 
@@ -190,11 +198,14 @@ class Genode::Rm_client : public Pager_object, public Rm_faulter,
 		          Thread_capability thread,
 		          Region_map_component *rm, unsigned long badge,
 		          Weak_ptr<Address_space> &address_space,
-		          Affinity::Location location)
+		          Affinity::Location location, unsigned imprint)
 		:
-			Pager_object(cpu_session, thread, badge, location), Rm_faulter(this),
+			Pager_object(cpu_session, thread, badge, location), Rm_faulter(this, imprint),
 			_region_map(rm), _address_space(address_space)
-		{ }
+		{
+
+
+		}
 
 		int pager(Ipc_pager &pager);
 
