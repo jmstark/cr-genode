@@ -650,14 +650,11 @@ void Region_map_component::processed(State state)
 		Rm_faulter *next = faulter->next();
 
 		/* Reactivate faulter */
-		//if (faulter->fault_state().pf_ip == state.pf_ip) {
-		//TODO: increase IP properly
-		//faulter->increase_ip();
+		if (faulter->fault_state().pf_ip == state.pf_ip)
+		{
 			_faulters.remove(faulter);
-			//faulter->continue_after_processed_fault();
-
 			faulter->continue_after_resolved_fault();
-		//}
+		}
 		/* Get next faulter */
 		faulter = next;
 	}
