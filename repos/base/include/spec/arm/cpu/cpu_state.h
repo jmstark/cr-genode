@@ -54,6 +54,7 @@ struct Genode::Cpu_state
 	addr_t ip;                        /* instruction pointer */
 	addr_t cpsr;                      /* current program status register */
 	addr_t cpu_exception;             /* last hardware exception */
+	addr_t dfar;					  /* data fault address register */
 };
 
 

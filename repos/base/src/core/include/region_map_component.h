@@ -373,7 +373,7 @@ class Genode::Region_map_component : public Rpc_object<Region_map>,
 		 * \param  pf_type  type of page fault (read/write/execute)
 		 */
 		void fault(Rm_faulter *faulter, addr_t pf_addr,
-		           Region_map::State::Fault_type pf_type);
+		           Region_map::State::Fault_type pf_type, addr_t pf_ip = 0);
 
 		/**
 		 * Dissolve faulter from region map

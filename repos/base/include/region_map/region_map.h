@@ -60,7 +60,7 @@ struct Genode::Region_map
 		/**
 		 * Might be used by a pager to identify a faulter
 		 */
-		unsigned imprint;
+		addr_t pf_ip;
 
 		/**
 		 * Value wich is requested to be written, or in return read
@@ -87,12 +87,12 @@ struct Genode::Region_map
 		 * Constructor
 		 */
 		State(Fault_type fault_type, addr_t fault_addr,
-		      unsigned const imprint = 0,
+		      unsigned const fault_ip = 0,
 		      unsigned const fault_value = 0,
 		      unsigned * const fault_instr = 0)
 		:
-			type(fault_type), addr(fault_addr), value(fault_value),
-			instr(fault_instr)
+			type(fault_type), addr(fault_addr), pf_ip(fault_ip),
+			value(fault_value),	instr(fault_instr)
 		{ }
 
 	};
