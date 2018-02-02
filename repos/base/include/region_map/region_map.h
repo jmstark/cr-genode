@@ -73,6 +73,11 @@ struct Genode::Region_map
 		unsigned * instr;
 
 		/**
+		 * Source/destination register of the load/store instruction
+		 */
+		unsigned reg;
+
+		/**
 		 * Default constructor
 		 */
 		State() : addr(0), value(0) { }
