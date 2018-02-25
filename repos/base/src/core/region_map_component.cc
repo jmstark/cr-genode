@@ -194,6 +194,7 @@ int Rm_client::pager(Ipc_pager &pager)
 			{
 				print_page_fault("memory access ", pf_addr, pf_ip,
 		                 pf_type, badge());
+				printf("pf_addr: %lx, region_offset: %lx, substract: %lx", pf_addr, region_offset, pf_addr - region_offset);
 				region_map->fault(this, pf_addr - region_offset, pf_type, pf_ip);
 			}
 
