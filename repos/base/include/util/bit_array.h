@@ -35,7 +35,7 @@ class Genode::Bit_array_base
 		class Invalid_clear        : public Exception {};
 		class Invalid_set          : public Exception {};
 
-	private:
+	protected:
 
 		enum {
 			BITS_PER_BYTE = 8UL,
