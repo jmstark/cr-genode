@@ -43,6 +43,8 @@ namespace Genode {
 	class Pager_entrypoint;
 
 	enum { PAGER_EP_STACK_SIZE = sizeof(addr_t) * 2048 };
+
+	constexpr bool disable_pagefault_warnings = true;
 }
 
 

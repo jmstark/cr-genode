@@ -69,7 +69,8 @@ void Pager_entrypoint::entry()
 					/* handle request */
 					if (obj->pager(_pager)) {
 						/* could not resolv - leave thread in pagefault */
-						warning("could not resolve "
+						if(!disable_pagefault_warnings)
+							warning("could not resolve "
 						        "pf=", Hex(_pager.fault_addr()), " ",
 						        "ip=", Hex(_pager.fault_ip()));
 					} else {
