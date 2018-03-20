@@ -28,6 +28,5 @@ void Pager_object::wake_up()
 
 void Pager_object::unresolved_page_fault_occurred()
 {
-	warning("a generic unresolved page fault occurred.");
 	state.unresolved_page_fault = true;
 }

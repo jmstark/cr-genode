@@ -163,10 +163,6 @@ class Genode::Rm_faulter : public Fifo<Rm_faulter>::Element
 		 */
 		void continue_after_resolved_fault();
 
-		/**
-		 * Increase instruction pointer by 1 instruction
-		 */
-		void increase_ip();
 };
 
 
@@ -202,10 +198,7 @@ class Genode::Rm_client : public Pager_object, public Rm_faulter,
 		:
 			Pager_object(cpu_session, thread, badge, location), Rm_faulter(this, imprint),
 			_region_map(rm), _address_space(address_space)
-		{
-
-
-		}
+		{ }
 
 		int pager(Ipc_pager &pager);
 

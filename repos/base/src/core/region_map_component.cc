@@ -191,12 +191,7 @@ int Rm_client::pager(Ipc_pager &pager)
 
 			/* register fault at responsible region map */
 			if (region_map)
-			{
-				print_page_fault("memory access ", pf_addr, pf_ip,
-		                 pf_type, badge());
-				printf("pf_addr: %lx, region_offset: %lx, substract: %lx", pf_addr, region_offset, pf_addr - region_offset);
 				region_map->fault(this, pf_addr - region_offset, pf_type, pf_ip);
-			}
 
 			/* there is no attachment return an error condition */
 			return 1;
@@ -296,21 +291,6 @@ void Rm_faulter::continue_after_resolved_fault()
 	_pager_object->wake_up();
 	_faulting_region_map = 0;
 	_fault_state = Region_map::State();
-}
-
-void Rm_faulter::increase_ip()
-{
-	Lock::Guard lock_guard(_lock);
-
-//	_pager_object->wake_up();
-	//_pager_object->state.ip += 32;
-//TODO: increase IP
-//	Cpu_session* cli = _faulting_region_map->clients()->first()->cpu_session_cap();
-
-//	cli+=0;
-//	PINF("IP = %lu", (cli->state.ip));
-//	_faulting_region_map = 0;
-//	_fault_state = Region_map::State();
 }
 
 
@@ -594,7 +574,6 @@ void Region_map_component::fault(Rm_faulter *faulter, addr_t pf_addr,
                                  Region_map::State::Fault_type pf_type, addr_t pf_ip)
 {
 	/* remember fault state in faulting thread */
-	//TODO
 	faulter->fault(this, Region_map::State(pf_type, pf_addr,pf_ip,0,0));
 
 	/* enqueue faulter */
@@ -640,7 +619,6 @@ Region_map::State Region_map_component::state()
 
 void Region_map_component::processed(State state)
 {
-	PINF("%s:%d: processed()", __FILE__, __LINE__);
 	/* Serialize access */
 	Lock::Guard lock_guard(_lock);
 
