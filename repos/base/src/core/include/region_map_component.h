@@ -45,6 +45,8 @@ namespace Genode {
 	class Rm_client;
 	class Rm_region;
 	class Rm_faulter;
+
+	constexpr bool disable_managed_ds_unmap_warning = true;
 }
 
 

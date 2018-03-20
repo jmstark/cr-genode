@@ -510,7 +510,8 @@ void Region_map_component::detach(Local_addr local_addr)
 		 */
 		if (!platform()->supports_direct_unmap()
 		 && dsc->managed() && dsc->core_local_addr() == 0) {
-			warning("unmapping of managed dataspaces not yet supported");
+			if(!disable_managed_ds_unmap_warning)
+				warning("unmapping of managed dataspaces not yet supported");
 			break;
 		}
 
