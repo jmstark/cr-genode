@@ -58,19 +58,15 @@ struct Genode::Region_map
 		Access_format format;
 
 		/**
-		 * Might be used by a pager to identify a faulter
+		 * Faulting instruction pointer within the 'core' space,
+		 * might be used to identify a faulter.
 		 */
-		addr_t pf_ip;
+		addr_t ip;
 
 		/**
 		 * Value wich is requested to be written, or in return read
 		 */
 		unsigned value;
-
-		/**
-		 * Faulting instruction pointer within the 'core' space
-		 */
-		unsigned * instr;
 
 		/**
 		 * Source/destination register of the load/store instruction
@@ -93,11 +89,10 @@ struct Genode::Region_map
 		 */
 		State(Fault_type fault_type, addr_t fault_addr,
 		      unsigned const fault_ip = 0,
-		      unsigned const fault_value = 0,
-		      unsigned * const fault_instr = 0)
+		      unsigned const fault_value = 0)
 		:
-			type(fault_type), addr(fault_addr), pf_ip(fault_ip),
-			value(fault_value),	instr(fault_instr)
+			type(fault_type), addr(fault_addr),
+			ip(fault_ip), value(fault_value)
 		{ }
 
 	};

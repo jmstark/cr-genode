@@ -266,7 +266,7 @@ void Rm_faulter::fault(Region_map_component *faulting_region_map,
 	_fault_state         = fault_state;
 
 	/* sign fault state to enable the RM session client to identify us */
-	_fault_state.pf_ip = fault_state.pf_ip;
+	_fault_state.ip = fault_state.ip;
 
 	_pager_object->unresolved_page_fault_occurred();
 }
@@ -575,7 +575,7 @@ void Region_map_component::fault(Rm_faulter *faulter, addr_t pf_addr,
                                  Region_map::State::Fault_type pf_type, addr_t pf_ip)
 {
 	/* remember fault state in faulting thread */
-	faulter->fault(this, Region_map::State(pf_type, pf_addr,pf_ip,0,0));
+	faulter->fault(this, Region_map::State(pf_type, pf_addr, pf_ip));
 
 	/* enqueue faulter */
 	_faulters.enqueue(faulter);
@@ -630,7 +630,7 @@ void Region_map_component::processed(State state)
 		Rm_faulter *next = faulter->next();
 
 		/* Reactivate faulter */
-		if (faulter->fault_state().pf_ip == state.pf_ip)
+		if (faulter->fault_state().ip == state.ip)
 		{
 			_faulters.remove(faulter);
 			faulter->continue_after_resolved_fault();
